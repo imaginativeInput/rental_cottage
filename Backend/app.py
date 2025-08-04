@@ -10,7 +10,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # allow_origins=["*"] FOR TESTING LOCALLY, DO NOT RUN THIS LINE IN PRODUCTION
+    allow_origins=["https://domekrzepiska.pl"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -84,8 +85,8 @@ async def send_message(payload: RequestPayload):
             "message": "Niestety dom nie jest dostępny w tym terminie. W razie pytań prosimy dzwonić na numer xxx-xxx-xxx"
         }
 
-
-app.mount("/", StaticFiles(directory="dist", html=True), name="static")
+# For local testing only, it is necessary for local hosting. !IMPORTANT
+# app.mount("/", StaticFiles(directory="../Frontend/dist", html=True), name="static")
 
 
 if __name__ == "__main__":
