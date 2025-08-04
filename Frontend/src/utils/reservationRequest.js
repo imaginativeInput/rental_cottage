@@ -35,7 +35,7 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/api/send-message', {
+    const response = await fetch('https://rental-cottage.onrender.com/api/send-message', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

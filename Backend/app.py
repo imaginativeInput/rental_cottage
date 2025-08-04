@@ -10,7 +10,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["*"] FOR TESTING LOCALLY, DO NOT RUN THIS LINE IN PRODUCTION
+    # allow_origins=["*"], # FOR TESTING LOCALLY, DO NOT RUN THIS LINE IN PRODUCTION
     allow_origins=["https://domekrzepiska.pl"],
     allow_credentials=True,
     allow_methods=["*"],
@@ -45,8 +45,17 @@ async def send_notification(client_email: str, client_phone: str, message_conten
     message = MessageSchema(
         subject="Rezerwacja",
         recipients=["platynski@gmail.com"],
-        body=f"Wiadomość od {client_email}\nTelefon: {client_phone}\n\n{message_content}",
-        subtype="plain",
+        # body=f"Wiadomość od {client_email}\nTelefon: {client_phone}\n\n{message_content}",
+        body=f"""
+                <h2>Rezerwacja</h2>
+                <p><strong>Email:</strong> {client_email}</p>
+                <p><strong>Telefon:</strong> {client_phone}</p>
+                \n\n
+                {message_content}
+            """,
+
+        # subtype="plain",
+        subtype="html",
         headers={
             "From": client_email,
             "Reply-To": client_email,
@@ -76,7 +85,14 @@ async def send_message(payload: RequestPayload):
             client_email=payload.email,
             client_phone=payload.phone,
             # client_name="Imię klienta",
-            message_content=f"Liczba osób: {payload.people}\nOd dnia: {payload.startDate}\nDo dnia: {payload.endDate}\n\nTreść:\n{payload.message}",
+            # message_content=f"Liczba osób: {payload.people}\nOd dnia: {payload.startDate}\nDo dnia: {payload.endDate}\n\nTreść:\n{payload.message}",
+            message_content=f"""
+                <p><strong>Liczba osób:</strong> {payload.people}</p>
+                <p><strong>Od dnia:</strong> {payload.startDate}</p>
+                <p><strong>Do dnia:</strong> {payload.endDate}</p>
+                <p><strong>Treść wiadomości:</strong></p>
+                <p>{payload.message}</p>
+            """,
         )
 
         return {"message": "Dziękujemy za złożenie rezerwacji, odezwiemy się wkrótce!"}

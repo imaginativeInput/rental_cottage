@@ -13,6 +13,7 @@ onMounted(async () => {
   // const response = await axios.get('/api/data');
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/data`);
   message.value = response.data.message;
+  console.log(message.value)
 
 });
 </script>
