@@ -1,0 +1,60 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.log
+*.sqlite3
+*.db
+*.env
+.env.*
+
+# FastAPI
+Backend/__pycache__/
+Backend/*.pyc
+Backend/instance/
+Backend/.mypy_cache/
+Backend/.pytest_cache/
+Backend/.venv/
+Backend/venv/
+Backend/env/
+Backend/.coverage
+Backend/.DS_Store
+
+# Node/Vue
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+Frontend/.env.*
