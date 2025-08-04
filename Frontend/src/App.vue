@@ -10,7 +10,8 @@ const message = ref('');
 
 onMounted(async () => {
   // const response = await axios.get('https://127.0.0.1:8000/api/data');
-  const response = await axios.get('/api/data');
+  // const response = await axios.get('/api/data');
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/data`);
   message.value = response.data.message;
 
 });

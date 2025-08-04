@@ -8,7 +8,8 @@ from typing import List
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # allow_origins=["*"], FOR LOCAL TESTING ONLY, DO NOT RUN IN PRODUCTION
+    allow_origins=["https://domekrzepiska.pl"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
