@@ -10,9 +10,9 @@ export const useCalendarStore = defineStore('calendar', () => {
 
   watch(isCalendarVisible, (newValue) => {
     if (newValue) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflowX = 'hidden'
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflowX = ''
     }
   })
 

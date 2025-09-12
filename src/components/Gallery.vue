@@ -1,17 +1,23 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
-import kitchen from '@/assets/gallery/kitchen01-fhd.png';
-import bathroom from '@/assets/gallery/bathroom01-fhd.png';
-import livingRoom from '@/assets/gallery/living-room01-fhd.png';
-import villageSunset from '@/assets/village-sunset.jpg';
+import benches from '@/assets/gallery/fireplace02.jpg';
+import livingRoom from '@/assets/gallery/livingroom05-best.jpg';
+import room01 from '@/assets/gallery/IMG_4270.jpg';
+import panorama01 from '@/assets/NZF_4359.jpg';
+import night01 from '@/assets/gallery/NZF_4375.jpg';
+import parkingLot from '@/assets/gallery/NZF_4268-fixed.png';
+import rockMountains from '@/assets/gallery/NZF_4473.jpg';
 
 const homeGalleryImages = {
-  livingRoom: { img: livingRoom, description: 'Living room image' },
-  kitchen: { img: kitchen, description: 'Kitchen image' },
-  bathroom: { img: bathroom, description: 'Bathroom image' },
-  // benches: { img: benches, description: 'Fireplace with a mountain view image' },
-  villageSunset: { img: villageSunset, description: 'Sunset in Tatra Mountain village' },
+  benches01: { img: benches, description: 'Fireplace and benches outside with Tatra Mountains view' },
+  livingRoom01: { img: livingRoom, description: 'Kitchen image' },
+  room01: { img: room01, description: 'Bathroom image' },
+  panorama01: { img: panorama01, description: 'Sunset in Tatra Mountain village' },
+  night01: { img: night01, description: 'Tatra Mountains panorama at night with moon shining above' },
+  parkingLot: { img: parkingLot, description: 'Parking lot view from rental cottage with beautiful Tatra Mountains panorama' },
+  rockMountains: { img: rockMountains, description: 'Tatra Mountains with great rock detail visible from the cottage' },
+
 };
 
 const imgs = Object.keys(homeGalleryImages);
@@ -24,20 +30,45 @@ const slidingDirection = ref('');
 const isAnimating = ref(false);
 let nextIndex = 0;
 
-const nextImg = () => {
-  if (isAnimating.value) return;
-  isAnimating.value = true;
-  slidingDirection.value = 'left';
+// ADDED
+const isLoading = ref(false);
+const loadImage = (src) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = resolve;
+  })
+}
+// ADDED^
+
+const nextImg = async () => {
+  if (isAnimating.value || isLoading.value) return;
+  isLoading.value = true;
+
   nextIndex = (currentIndex.value + 1) % imgs.length;
-  nextImgPath.value = homeGalleryImages[imgs[nextIndex]].img;
+  const newImg = homeGalleryImages[imgs[nextIndex]].img;
+
+  await loadImage(newImg);
+
+  nextImgPath.value = newImg;
+  slidingDirection.value = 'left';
+  isAnimating.value = true;
+  isLoading.value = false;
 }
 
-const prevImg = () => {
-  if (isAnimating.value) return;
-  isAnimating.value = true;
-  slidingDirection.value = 'right';
+const prevImg = async () => {
+  if (isAnimating.value || isLoading.value) return;
+  isLoading.value = true;
+
   nextIndex = (currentIndex.value - 1 + imgs.length) % imgs.length;
-  nextImgPath.value = homeGalleryImages[imgs[nextIndex]].img;
+  const newImg = homeGalleryImages[imgs[nextIndex]].img;
+
+  await loadImage(newImg);
+
+  nextImgPath.value = homeGalleryImages[imgs[nextIndex]].img;  
+  slidingDirection.value = 'right';
+  isAnimating.value = true;
+  isLoading.value = false;
 };
 
 const handleAnimationEnd = () => {
@@ -47,6 +78,14 @@ const handleAnimationEnd = () => {
   isAnimating.value = false;
   slidingDirection.value = '';
 };
+
+
+onMounted(() => {
+  imgs.forEach(key => {
+    const img = new Image();
+    img.src = homeGalleryImages[key].img;
+  });
+});
 </script>
 
 <template>
@@ -87,7 +126,20 @@ const handleAnimationEnd = () => {
 
 <style scoped>
 .home-gallery {
-  background-color: var(--clr-light);
+  background-color: transparent;
+  height: 100vh;
+  position: relative;
+
+  width: 100vw;
+  overflow: hidden;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100vw;
+  height: 100%;
+  position: relative;
 }
 
 .home-gallery__welcome-section {
@@ -100,17 +152,10 @@ const handleAnimationEnd = () => {
   font-family: 'Playfair Display', serif;
   text-align: center;
   font-size: var(--size-2xl);
-  color: var(--clr-dark-blue);
   color: var(--clr-warm-beige-400);
-  /* color: var(--clr-slate600); */
 
   padding: 0 2rem;
   text-transform: uppercase;
-}
-
-.image-wrapper {
-  position: relative;
-  display: inline-block;
 }
 
 .home-gallery-btn {
@@ -163,17 +208,17 @@ const handleAnimationEnd = () => {
 .image-wrapper {
   overflow: hidden;
   width: 100vw;
-  height: 100vh;
-  /* height: calc(100vh - 65px); */
 }
 
 .slide-image {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--clr-dark);
 }
 
 @keyframes slideOutLeft {
@@ -230,6 +275,16 @@ const handleAnimationEnd = () => {
 
 .slide-in-left {
   animation: slideInLeft 0.5s forwards;
+}
+
+.slide-out-left,
+.slide-out-right {
+  z-index: 2;
+}
+
+.slide-in-left,
+.slide-in-right {
+  z-index: 1;
 }
 
 

@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <section class="welcome section">
+  <section class="welcome">
     <h2 class="welcome__name">Domek Rzepiska</h2>
     <hr class="welcome__hr" style="width: 40%">
     <h1 class="welcome__title">Panorama Tatr</h1>
@@ -19,7 +19,7 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  height: 55vh;
+  height: 45vh;
 }
 
 .welcome__name {
@@ -90,6 +90,12 @@
 }
 
 @media (min-width: 768px) {
+  .welcome {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    height: 50vh;
+  }
+
   .welcome__name {
     font-size: var(--size-4xl);
   }
@@ -104,6 +110,10 @@
 }
 
 @media (min-width: 1024px) {
+  .welcome {
+    height: 55vh;
+  }
+
   .welcome__name {
     font-size: var(--size-5xl);
   }

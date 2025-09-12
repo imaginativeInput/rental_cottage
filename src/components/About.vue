@@ -1,9 +1,9 @@
 <script setup>
 import villageSunset from '@/assets/village-sunset.jpg';
-import TatraMountainsGreen from '@/assets/gallery/TatraMountains-Green.jpg';
+import TatraMountainsGreen from '@/assets/gallery/NZF_4375.jpg';
 import purpleSky from '@/assets/gallery/purple-sky-fhd-high.png';
 import tatraMountainsHousePanorama from '@/assets/gallery/tatra-mountains-house-panorama.jpg';
-import tatraMountainsClean from '@/assets/gallery/TatraMountains-Clean.jpg';
+import tatraMountainsClean from '@/assets/gallery/NZF_4359.jpg';
 
 </script>
 
@@ -11,15 +11,13 @@ import tatraMountainsClean from '@/assets/gallery/TatraMountains-Clean.jpg';
   <section class="o-nas section-wide" id="o-nas">
     <div class="o-nas__content">
       <h2 class="o-nas__title">Dom z widokiem na panoramę Tatr</h2>
-      <p class="o-nas__description">Domek wypoczynkowy z pięknym widokiem na
-        <strong>panoramę Tatr</strong>.
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea ex dignissimos maiores quis expedita officia
-        fugiat ad consectetur libero nostrum vel aperiam, ipsum doloremque, numquam incidunt rerum molestias quod
-        facilis optio deleniti dolorum voluptatibus laudantium? Alias et officiis incidunt animi voluptatem
-        cupiditate. Eius repudiandae consequatur molestias fugit totam sed adipisci ducimus, libero exercitationem
-        fuga voluptates praesentium quibusdam dolores dignissimos laboriosam impedit id ab. Neque dolores
-        quibusdam
-        alias eligendi earum veniam.
+      <p class="o-nas__description">
+        Ze wszystkich pomieszczeń rozpościera się niewiarygodnie cudowny widok na całą panoramę Tatr polskich i
+        słowackich…
+
+        <br><br>
+        Domek ma 127m² powierzchni, trzy kondygnacje, może pomieścić 10 – 13 osób. Przed budynkiem znajduje się parking
+        dla czterech samochodów oraz garaż na jedno auto. Dostęp do internetu – WIFI w całym domu
       </p>
     </div>
     <br class="img-separator">
@@ -47,21 +45,30 @@ import tatraMountainsClean from '@/assets/gallery/TatraMountains-Clean.jpg';
 .gallery>img {
   --_p: calc(-1*var(--g));
   grid-area: 1/1;
-  /* width: 350px; */
-  /* control the size */
-  aspect-ratio: 1;
+  aspect-ratio: 16 / 10;
   cursor: pointer;
   transition: .4s .1s;
-  border-radius: 18px;
 }
 
 .gallery>img:first-child {
-  clip-path: polygon(0 0, calc(100% + var(--_p)) 0, 0 calc(100% + var(--_p)))
+  clip-path: polygon(0 0, calc(100% + var(--_p)) 0, 0 calc(100% + var(--_p)));
 }
 
 .gallery>img:last-child {
-  clip-path: polygon(100% 100%, 100% calc(0% - var(--_p)), calc(0% - var(--_p)) 100%)
+  clip-path: polygon(100% 100%, 100% calc(0% - var(--_p)), calc(0% - var(--_p)) 100%);
 }
+
+
+/* TESTING */
+.gallery>img:first-child {
+  clip-path: polygon(0 0, calc(100% + var(--_p)) 0, 0 calc(100% + var(--_p)));
+}
+
+.gallery>img:last-child {
+  clip-path: polygon(100% 100%, 100% calc(0% - var(--_p)), calc(0% - var(--_p)) 100%);
+}
+
+/* TESTING END */
 
 .gallery:hover>img:last-child,
 .gallery:hover>img:first-child:hover {
@@ -81,24 +88,18 @@ br {
 
 .o-nas {
   display: flex;
-  /* width: 100%; */
   align-items: center;
   flex-direction: column;
 
   position: relative;
-  background-color: var(--clr-dark-blue);
-  /* background: linear-gradient(155deg, #052f4a, #052f4a, #228b22); */
-
+  background-color: var(--clr-dark);
   text-align: left;
 
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: 5rem;
 }
 
 .o-nas__title {
   font-size: var(--size-2xl);
-  /* color: var(--clr-warm-beige-400); */
-  /* color: var(--clr-forest-green-400); */
   color: var(--clr-light);
 
   justify-self: left;
@@ -118,8 +119,8 @@ br {
 .o-nas__img {
   width: 94%;
   justify-self: center;
-  border-radius: 18px;
-  /* box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.4); */
+  /* border-radius: 18px; */
+  box-shadow: 10px 10px 10px rgba(255, 255, 255, 1);
 }
 
 .o-nas__line {
@@ -201,11 +202,13 @@ br {
 
   .o-nas__title {
     font-size: var(--size-5xl);
+    margin-right: 0.5rem;
   }
 
   .o-nas__description {
     font-size: var(--size-xl);
   }
+
 }
 
 @media (min-width: 1675px) {

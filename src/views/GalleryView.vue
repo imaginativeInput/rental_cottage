@@ -3,28 +3,34 @@ import { ref, computed, onMounted } from 'vue';
 
 import Header from '@/components/Header.vue';
 
+import table01 from '@/assets/gallery/Mobile-livingroom03.jpg';
 import livingRoom01 from '@/assets/gallery/living-room01.jpg';
-import livingRoom02 from '@/assets/gallery/living-room02.jpg';
-import livingRoom03 from '@/assets/gallery/living-room03.jpg';
+import livingRoom02 from '@/assets/gallery/livingroom02.jpg';
 import kitchen01 from '@/assets/gallery/kitchen01.jpg';
+import kitchen02 from '@/assets/gallery/kitchen02.jpg';
 import bedroom01 from '@/assets/gallery/bedroom01.jpg';
 import bedroom02 from '@/assets/gallery/bedroom02.jpg';
-import benches from '@/assets/gallery/benches.jpg';
+import benches from '@/assets/gallery/fireplace02.jpg';
+import balcony01 from '@/assets/gallery/balcony02.jpg';
 
-import tatraMountains from '@/assets/gallery/TatraMountains.jpg';
-import tatraMountainsGreen from '@/assets/gallery/TatraMountains-Green.jpg';
-import tatraMountainsClean from '@/assets/gallery/TatraMountains-Clean.jpg';
-import tatraMountainsCleanOrange from '@/assets/gallery/TatraMountains-Clean-Orange.jpg';
-import tatraMountainsHousePanorama from '@/assets/gallery/tatra-mountains-house-panorama.jpg';
-import tatraMountainsClouds from '@/assets/gallery/TatraMountains-Clouds.jpg';
+import tatraMountains from '@/assets/gallery/NZF_4359.jpg';
+import tatraMountainsGreen from '@/assets/gallery/NZF_4358.jpg';
+import tatraMountainsClean from '@/assets/gallery/NZF_4473.jpg';
+import tatraMountainsCleanOrange from '@/assets/gallery/NZF_4375.jpg';
+import tatraMountainsHousePanorama from '@/assets/gallery/NZF_4268-fixed.png';
+import tatraMountainsClouds from '@/assets/gallery/NZF_4513.jpg';
 
 // Balcony
 import balconyPurpleSky from '@/assets/gallery/purple-sky.jpg';
 import balconySunset from '@/assets/gallery/balcony-sunset.jpg';
 
-const imgs = [benches, bedroom01, bedroom02, kitchen01, livingRoom01, tatraMountainsClouds, balconySunset, livingRoom02, livingRoom03,
-  balconyPurpleSky, tatraMountains, tatraMountainsClean, tatraMountainsGreen,
-  tatraMountainsCleanOrange, tatraMountainsHousePanorama,
+const imgs = [
+  tatraMountainsCleanOrange,
+  table01, kitchen02, balcony01,
+  livingRoom02,
+  tatraMountains, tatraMountainsGreen, tatraMountainsClouds, tatraMountainsClean,
+  balconySunset, balconyPurpleSky,
+  benches, tatraMountainsHousePanorama
 ];
 
 const isHovered = ref(false);
@@ -45,60 +51,69 @@ const viewerVisible = ref(false);
 const showImage = (src) => {
   viewerSrc.value = src;
   viewerVisible.value = true;
-}
+};
 
 const closeViewer = () => {
   viewerVisible.value = false;
-}
+};
 </script>
 
 <template>
 
   <span id="close" @click="closeViewer" v-if="viewerVisible">&times;</span>
-  <div id="image-viewer" v-show="viewerVisible" :style="{ display: viewerVisible ? 'block' : 'none' }">
-    <img :src="viewerSrc" id="full-image">
-  </div>
-  <div class="image-viewer-overlay" v-if="viewerVisible">
+
+  <!-- Lightbox -->
+  <div v-if="viewerVisible" class="lightbox" @click="closeViewer">
+    <img :src="viewerSrc" alt="A gallery image">
   </div>
 
   <Header :isLightTheme="true" />
-  <div class="gallery__body">
+  <div class="gallery__body" id="galeria">
     <h1 class="gallery__title">Galeria</h1>
     <div class="gallery__img-grid">
-      <div v-for="(img, index) in imgs" :key="index" style="
-  position: relative;
-  border: 6px solid transparent;" :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]"
-        class="gallery-item image" @mouseenter="" @mouseleave="" :id="`img-${index}`" @click="showImage(img)">
-        <img :src="img" alt="image" @mouseenter="isHovered = true" @mouseleave="isHovered = false"
-          :style="elementStyle">
-        {{ console.log(index) }}
-        {{ console.log(img) }}
-        <div class="img-overlay">
-        </div>
-      </div>
+      <div v-for="(img, index) in imgs" :key="index" 
+      :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]"
+      class="gallery-item"
+      :id="`img-${index}`"
+      @click="showImage(img)">
+        <img :src="img" alt="image" :style="elementStyle">
     </div>
+  </div>
 
   </div>
 </template>
 
 
 <style>
-.img-overlay {
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10002;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox .close {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  text-decoration: none;
 }
 
-.img-container:hover {}
 
 .img-container:hover .img-overlay {
   opacity: 1;
@@ -131,6 +146,7 @@ const closeViewer = () => {
   transition: all 0.3s ease-in-out;
   border-radius: 0.7rem;
   grid-column: span 1;
+  border: 6px solid transparent;
 }
 
 .gallery-item:hover {
@@ -148,9 +164,7 @@ const closeViewer = () => {
   height: 100%;
 }
 
-.gallery-item.expanded img {
-  box-shadow: 8px 8px 8px 8px (0, 0, 0, 0.6);
-}
+
 
 .gallery__img-grid {
   display: grid;
@@ -160,58 +174,13 @@ const closeViewer = () => {
   margin-bottom: 5rem;
 }
 
-/* IMAGE VIEWER START */
-#image-viewer {
-  position: fixed;
-  display: none;
-  z-index: 10002;
-  top: 50%;
-  left: 50%;
-  transition: all 0.3s;
-  transform: translate(-50%, -50%);
-}
-
-#image-viewer div {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-#image-viewer img {
-  max-width: 1280px;
-  max-height: 640px;
-  animation: viewImg 0.6s;
-}
-
 #close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
+  position: fixed;
+  top: 0.5rem;
+  right: 1rem;
   color: var(--clr-light);
-  font-size: 2rem;
-  z-index: 10000;
-}
-
-.image-viewer-overlay {
-  position: absolute;
-  display: none;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  display: flex;
-  opacity: 1;
-  z-index: 9999;
+  font-size: 3.5rem;
+  z-index: 10003;
 }
 
 #close:hover,
@@ -219,21 +188,6 @@ const closeViewer = () => {
   cursor: pointer;
   opacity: 0.6;
 }
-
-
-@keyframes viewImg {
-  from {
-    transform: scale(0);
-  }
-
-  to {
-    transform: scale(1);
-  }
-}
-
-/* IMAGE VIEWER END */
-
-
 
 @media (min-width: 475px) {
   .gallery__img-grid {
@@ -264,7 +218,7 @@ const closeViewer = () => {
 
   .img-0 {
     grid-row: span 2;
-    grid-column: span 2;
+    grid-column: span 3;
   }
 
   .img-1 {
@@ -295,7 +249,8 @@ const closeViewer = () => {
   }
 
   .img-7 {
-    grid-column: span 1;
+    grid-column: span 2;
+    grid-row: span 2;
   }
 
   .img-8 {
@@ -303,28 +258,21 @@ const closeViewer = () => {
   }
 
   .img-9 {
-    grid-column: span 2;
+    grid-column: span 1;
+    grid-row: span 1;
   }
 
   .img-10 {
-    /* grid-column: span 3; */
+    grid-column: span 1;
   }
 
   .img-11 {
-    /* grid-column: span 2; */
+    grid-column: span 2;
   }
 
   .img-12 {
-    grid-column: span 2;
-  }
-
-  .img-13 {
-
-    grid-column: span 2;
-  }
-
-  .img-14 {
-    /* grid-column: span 2; */
+    grid-column: span 3;
+    grid-row: span 2;
   }
 }
 
@@ -340,5 +288,19 @@ const closeViewer = () => {
     grid-template-columns: 475px 475px 475px;
     grid-template-rows: 325px;
   }
+}
+
+@media screen and (orientation: portrait) {
+  /* #image-viewer img {
+    width: 100%;
+    height: auto;
+  } */
+}
+
+@media screen and (orientation: landscape) {
+  /* #image-viewer img {
+    width: 90%;
+    height: auto;
+  } */
 }
 </style>
