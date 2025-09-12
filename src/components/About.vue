@@ -1,10 +1,6 @@
 <script setup>
-import villageSunset from '@/assets/village-sunset.jpg';
 import TatraMountainsGreen from '@/assets/gallery/NZF_4375.jpg';
-import purpleSky from '@/assets/gallery/purple-sky-fhd-high.png';
-import tatraMountainsHousePanorama from '@/assets/gallery/tatra-mountains-house-panorama.jpg';
 import tatraMountainsClean from '@/assets/gallery/NZF_4359.jpg';
-
 </script>
 
 <template>

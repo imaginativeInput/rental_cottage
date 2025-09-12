@@ -1,6 +1,10 @@
 import { ref } from 'vue'
 import { useGuestStore } from '@/stores/guestStore'
 
+// Regex patterns
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+\d{2}\s\d{3}\s\d{3}\s\d{3}$/;
+
 export const dateRange = ref({
   start: new Date(),
   end: new Date(),
@@ -20,9 +24,16 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
   const phone = document.getElementById(phoneID).value.trim()
   const message = document.getElementById(messageID).value.trim()
 
+  const isEmailValid = emailRegex.test(email)
+  const isPhoneValid = phoneRegex.test(phone)
+
   if (!email) {
     alert('Prosimy o podanie adresu e-mail, na który możemy się odezwać :)')
     return
+  } else if (!isEmailValid) {
+    alert('Nieprawidłowy adres email.')
+  } else if (!isPhoneValid) {
+    alert('Nieprawidłowy numer telefonu.')
   }
 
   const payload = {
@@ -35,7 +46,7 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
   }
 
   try {
-    const response = await fetch('https://rental-cottage-api.vercel.app/api/send-message', {
+    const response = await fetch('https://rental-cottage-d1xcvceet-imaginativeinputs-projects.vercel.app/api/send-message', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

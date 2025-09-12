@@ -101,18 +101,12 @@ import Contact from '../components/Contact.vue';
   height: auto;
 }
 
-/* .vc-highlight-bg-light {
-  background-color: var(--clr-warm-beige-200);
-} */
-
 .vc-highlight-bg-light {
   background-color: var(--clr-slate200);
 }
 
 .vc-light.vc-attr,
 .vc-light .vc-attr {
-  /* --vc-highlight-solid-bg: var(--clr-warm-beige-600); */
-  /* --vc-highlight-solid-bg: var(--clr-slate800); */
   --vc-highlight-solid-bg: var(--clr-dark);
 
   --vc-highlight-outline-border: var(--clr-warm-beige-600);

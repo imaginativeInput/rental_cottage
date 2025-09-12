@@ -1,17 +1,24 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useScreens } from 'vue-screen-utils';
 
 import { useI18n } from 'vue-i18n';
-import { sendReservationRequest } from '@/utils/reservationRequest';
+import { dateRange, sendReservationRequest } from '@/utils/reservationRequest';
 
+// Regex patterns
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+\d{1,3}(\s?\d{3}){2,3}$/
 
 // Form state
 const people = ref(1);
 const email = ref("");
 const phone = ref("");
-const dateRange = ref({ start: null, end: null });
+// const dateRange = ref({ start: null, end: null });
 const questions = ref("");
+
+// Computed properties
+const isEmailValid = computed(() => emailRegex.test(email.value))
+const isPhoneValid = computed(() => phoneRegex.test(phone.value))
 
 // Config
 const maxChars = 300;
@@ -74,19 +81,21 @@ onUnmounted(() => {
           </div>
 
           <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" v-model="email" placeholder="Enter your email" class="form-input" />
+            <label for="email" style="display: flex; flex-direction: row;">Email<p style="color:red; font-weight: 200;">*</p></label>
+            <input id="email" type="email" v-model="email" placeholder="example@email.com" class="form-input" />
+            <p v-if="email && !isEmailValid" style="color:red;">Nieprawidłowy email</p>
           </div>
 
           <div class="form-group">
-            <label for="phone">Numer telefonu</label>
-            <input id="phone" type="tel" v-model="phone" placeholder="Enter your phone number" class="form-input" />
+            <label for="phone" style="display: flex; flex-direction: row;">Numer telefonu<p style="color:red; font-weight: 200;">*</p></label>
+            <input id="phone" type="tel" v-model="phone" placeholder="+48 123 456 789" class="form-input" />
+            <p v-if="phone && !isPhoneValid" style="color:red;">Nieprawidłowy numer telefonu</p>
           </div>
         </div>
 
         <!-- Full-width Calendar -->
         <div class="form-group full-width">
-          <label>Choose Dates</label>
+          <label>Wybierz Datę</label>
           <VDatePicker v-if="width < 550" :min-date="new Date()" :columns="columns" :attributes="attrs" :expanded="null"
             :locale="userLocale" v-model.range="dateRange" :masks="masks" class="my-custom-datepicker" />
           <VDatePicker v-else :min-date="new Date()" :columns="columnsWide" :attributes="attrs" :expanded="expanded"

@@ -7,8 +7,6 @@ import { nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MobileHeader from './MobileHeader.vue';
-import panorama from '@/assets/panorama.jpg';
-
 
 const props = defineProps({
   isLightTheme: {
@@ -147,7 +145,6 @@ const reservationButtonClass = computed(() => {
 
       <ul class="header__menu">
         <li>
-          <!-- :href="isHomePage ? '#o-nas' : '/#o-nas'" -->
           <a @click="isHomePage ? scrollToSection('o-nas') : routeAndScroll('/', 'o-nas')" class="header__link"
             :class="linkThemeClass">{{ t('about') }}</a>
         </li>
@@ -161,11 +158,6 @@ const reservationButtonClass = computed(() => {
         </li>
         <li class="header__line"></li>
         <li>
-          <!-- <button id="reservationButton" :class="scrolled ? 'header__btn-scrolled' : 'btn header__btn'"
-            style="text-transform: uppercase;" @click="scrollToSection('reservation-section')">
-            {{ t('reservation') }}
-          </button> -->
-
           <button id="reservationButton" :class="reservationButtonClass" style="text-transform: uppercase;"
             @click="handleResevationClick">
             {{ t('reservation') }}

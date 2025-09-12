@@ -3,10 +3,10 @@ import { ref, onMounted } from 'vue';
 
 import benches from '@/assets/gallery/fireplace02.jpg';
 import livingRoom from '@/assets/gallery/livingroom05-best.jpg';
-import room01 from '@/assets/gallery/IMG_4270.jpg';
+import room01 from '@/assets/gallery/bedroom01.jpg';
 import panorama01 from '@/assets/NZF_4359.jpg';
 import night01 from '@/assets/gallery/NZF_4375.jpg';
-import parkingLot from '@/assets/gallery/NZF_4268-fixed.png';
+import parkingLot from '@/assets/gallery/outside01.png';
 import rockMountains from '@/assets/gallery/NZF_4473.jpg';
 
 const homeGalleryImages = {

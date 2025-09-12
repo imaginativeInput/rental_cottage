@@ -1,15 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 
 import Header from '@/components/Header.vue';
 
 import table01 from '@/assets/gallery/Mobile-livingroom03.jpg';
-import livingRoom01 from '@/assets/gallery/living-room01.jpg';
 import livingRoom02 from '@/assets/gallery/livingroom02.jpg';
-import kitchen01 from '@/assets/gallery/kitchen01.jpg';
-import kitchen02 from '@/assets/gallery/kitchen02.jpg';
-import bedroom01 from '@/assets/gallery/bedroom01.jpg';
-import bedroom02 from '@/assets/gallery/bedroom02.jpg';
+import kitchen02 from '@/assets/gallery/Mobile-kitchen02.jpg';
 import benches from '@/assets/gallery/fireplace02.jpg';
 import balcony01 from '@/assets/gallery/balcony02.jpg';
 
@@ -17,20 +13,20 @@ import tatraMountains from '@/assets/gallery/NZF_4359.jpg';
 import tatraMountainsGreen from '@/assets/gallery/NZF_4358.jpg';
 import tatraMountainsClean from '@/assets/gallery/NZF_4473.jpg';
 import tatraMountainsCleanOrange from '@/assets/gallery/NZF_4375.jpg';
-import tatraMountainsHousePanorama from '@/assets/gallery/NZF_4268-fixed.png';
+import tatraMountainsHousePanorama from '@/assets/gallery/outside01.png';
 import tatraMountainsClouds from '@/assets/gallery/NZF_4513.jpg';
 
-// Balcony
-import balconyPurpleSky from '@/assets/gallery/purple-sky.jpg';
-import balconySunset from '@/assets/gallery/balcony-sunset.jpg';
+import bedroom01 from '@/assets/gallery/bedroom01.jpg';
+import mobileBalconyLivingroom01 from '@/assets/gallery/Mobile-balcony-livingroom01.jpg';
 
 const imgs = [
   tatraMountainsCleanOrange,
   table01, kitchen02, balcony01,
   livingRoom02,
-  tatraMountains, tatraMountainsGreen, tatraMountainsClouds, tatraMountainsClean,
-  balconySunset, balconyPurpleSky,
-  benches, tatraMountainsHousePanorama
+  tatraMountainsHousePanorama, tatraMountainsGreen,
+  tatraMountainsClouds, tatraMountainsClean,
+  bedroom01, mobileBalconyLivingroom01,
+  benches, tatraMountains
 ];
 
 const isHovered = ref(false);
