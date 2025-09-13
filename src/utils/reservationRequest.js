@@ -3,7 +3,7 @@ import { useGuestStore } from '@/stores/guestStore'
 
 // Regex patterns
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^\+\d{2}\s\d{3}\s\d{3}\s\d{3}$/;
+const phoneRegex = /^\+\d{1,3}(\s?\d{3}){2,3}$/;
 
 export const dateRange = ref({
   start: new Date(),
@@ -46,7 +46,7 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
   }
 
   try {
-    const response = await fetch('https://rental-cottage-d1xcvceet-imaginativeinputs-projects.vercel.app/api/send-message', {
+    const response = await fetch('https://rental-cottage-api-git-main-imaginativeinputs-projects.vercel.app/api/send-message', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
