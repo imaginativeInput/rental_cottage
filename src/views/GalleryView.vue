@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
 import Header from '@/components/Header.vue';
 
@@ -7,7 +7,7 @@ import table01 from '@/assets/gallery/Mobile-livingroom03.jpg';
 import livingRoom02 from '@/assets/gallery/livingroom02.jpg';
 import kitchen02 from '@/assets/gallery/Mobile-kitchen02.jpg';
 import benches from '@/assets/gallery/fireplace02.jpg';
-import balcony01 from '@/assets/gallery/balcony02.jpg';
+import balcony01 from '@/assets/gallery/Mobile-livingroom-balcony01.jpg';
 
 import tatraMountains from '@/assets/gallery/NZF_4359.jpg';
 import tatraMountainsGreen from '@/assets/gallery/NZF_4358.jpg';
@@ -29,10 +29,25 @@ const imgs = [
   benches, tatraMountains
 ];
 
+
+const expandedIndex = ref(null);
+const viewerSrc = ref('');
+const viewerVisible = ref(false);
 const isHovered = ref(false);
 
+const processedImgs = computed(() =>
+  imgs.map(img => {
+    const ext = img.split(".").pop();
+    const noExt = img.slice(0, -(ext.length + 1));
+    return {
+      original: img,
+      bgUrl: `${noExt}_small.${ext}`,
+    };
+  })
+);
+
 const elementStyle = computed(() => ({
-  backgroundColor: isHovered.value ? 'rgba(0, 0, 0, 0.5)' : '#2980b9',
+  backgroundColor: isHovered.value ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0)',
   color: isHovered.value ? '#fff' : '#eee',
   borderRadius: '8px',
   border: 'transparent',
@@ -40,9 +55,6 @@ const elementStyle = computed(() => ({
   transition: 'all 0.3s ease',
 }))
 
-
-const viewerSrc = ref('');
-const viewerVisible = ref(false);
 
 const showImage = (src) => {
   viewerSrc.value = src;
@@ -52,6 +64,29 @@ const showImage = (src) => {
 const closeViewer = () => {
   viewerVisible.value = false;
 };
+
+const vIntersect = {
+  mounted(el) {
+    const observer = new IntersectionObserver((entires) => {
+      entires.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = el.querySelector('img');
+          const onLoad = () => {
+            el.classList.add('loaded');
+            observer.unobserve(el);
+          };
+
+          if (img.complete) {
+            onLoad();
+          } else {
+            img.addEventListener('load', onLoad);
+          }
+        }
+      })
+    }, { threshold: 0.1 }); 
+    observer.observe(el);
+  }
+}
 </script>
 
 <template>
@@ -67,14 +102,17 @@ const closeViewer = () => {
   <div class="gallery__body" id="galeria">
     <h1 class="gallery__title">Galeria</h1>
     <div class="gallery__img-grid">
-      <div v-for="(img, index) in imgs" :key="index" 
-      :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]"
-      class="gallery-item"
-      :id="`img-${index}`"
-      @click="showImage(img)">
-        <img :src="img" alt="image" :style="elementStyle">
+      <div v-for="(img, index) in processedImgs" :key="index"
+        :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]"
+        class="gallery-item"
+        :id="`img-${index}`" @click="showImage(img.original)" :style="{
+          backgroundImage: `url(${img.bgUrl})`
+        }"
+        v-intersect
+        >
+        <img :src="img.original" :alt="img.original" :style="elementStyle" loading="lazy">
+      </div>
     </div>
-  </div>
 
   </div>
 </template>
@@ -108,6 +146,34 @@ const closeViewer = () => {
   width: 100%;
   height: 100%;
   text-decoration: none;
+}
+
+.gallery-item {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.gallery-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: pulse 3.5s infinite;
+  background-color: rgba(0, 0, 0);
+}
+
+.gallery-item.loaded::before {
+  animation: none;
+  content: none;
+}
+
+.gallery-item img {
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+}
+
+.gallery-item.loaded img {
+  opacity: 1;
 }
 
 
@@ -184,6 +250,21 @@ const closeViewer = () => {
   cursor: pointer;
   opacity: 0.6;
 }
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 
 @media (min-width: 475px) {
   .gallery__img-grid {

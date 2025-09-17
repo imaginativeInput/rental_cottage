@@ -26,6 +26,8 @@ const dateTomorrow = ref(`${today + 1} ${monthFirstLetters} ${year}`);
 const startDateNumber = ref(null);
 const endDateNumber = ref(null);
 
+const textareaRef = ref(null);
+const charCountRef = ref(null);
 
 const guestStore = useGuestStore();
 const guestLimit = 13;
@@ -47,7 +49,7 @@ const changeNumberOfGuests = (id) => {
   console.log(`PEOPLE COUNT VALUE: ${peopleCount.value}`);
 }
 
-// SOMETHIGN TO GET RID OF
+// SOMETHING TO GET RID OF
 const isCalendarOpen = ref(false);
 
 const calendarStore = useCalendarStore();
@@ -135,23 +137,39 @@ onMounted(() => {
   console.log(`${typeof startDateNumber}: ${startDateNumber}, nDay: ${endDateNumber}... 1: ${typeof 1}`);
 
   // RESERVATION FORM
-  const textarea = document.getElementById('message-input-popUpForm');
-  const charCount = document.getElementById('charCount');
+  // const textarea = document.getElementById('message-input-popUpForm');
+  // const charCount = document.getElementById('charCount');
 
-  textarea.addEventListener('input', () => {
-    const currentLength = textarea.value.length;
-    const maxLength = textarea.getAttribute('maxlength');
-    charCount.textContent = `${currentLength}/${maxLength} znaków`;
+  // textarea.addEventListener('input', () => {
+  //   const currentLength = textarea.value.length;
+  //   const maxLength = textarea.getAttribute('maxlength');
+  //   charCount.textContent = `${currentLength}/${maxLength} znaków`;
 
-    if (parseInt(currentLength, 10) === parseInt(maxLength, 10)) {
-      charCount.style.color = 'red';
-      charCount.textContent = `${currentLength}/${maxLength} znaków - osiągnięto limit znaków.`;
-    } else {
-      charCount.style.color = 'var(--clr-dark)';
-      charCount.textContent = `${currentLength}/${maxLength} znaków`;
-    };
-  })
+  //   if (parseInt(currentLength, 10) === parseInt(maxLength, 10)) {
+  //     charCount.style.color = 'red';
+  //     charCount.textContent = `${currentLength}/${maxLength} znaków - osiągnięto limit znaków.`;
+  //   } else {
+  //     charCount.style.color = 'var(--clr-dark)';
+  //     charCount.textContent = `${currentLength}/${maxLength} znaków`;
+  //   };
+  // })
   // RESERVATION FORM^
+
+  if (textareaRef.value && charCountRef.value) {
+    textareaRef.value.addEventListener('input', () => {
+      const currentLength = textareaRef.value.value.length;
+      const maxLength = textareaRef.value.getAttribute('maxlength');
+      charCountRef.value.textContent = `${currentLength}/${maxLength} znaków`;
+
+      if (parseInt(currentLength) === parseInt(maxLength)) {
+        charCountRef.value.style.color = 'red';
+        charCountRef.value.textContent = `${currentLength}/${maxLength} znaków - osiągnięto limit znaków.`;
+      } else {
+        charCountRef.value.style.color = 'var(--clr-dark)';
+        charCountRef.value.textContent = `${currentLength}/${maxLength} znaków`;
+      }
+    })
+  }
 
   window.addEventListener('resize', updateWidth); {
     updateWidth();

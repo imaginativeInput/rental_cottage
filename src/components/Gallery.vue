@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 import benches from '@/assets/gallery/fireplace02.jpg';
 import livingRoom from '@/assets/gallery/livingroom05-best.jpg';
@@ -79,12 +79,61 @@ const handleAnimationEnd = () => {
   slidingDirection.value = '';
 };
 
+// LAZY LOADING WIP
+const processedImgs = computed(() =>
+  imgs.map(img => {
+    const ext = img.split(".").pop();
+    const noExt = img.slice(0, -(ext.length + 1));
+    return {
+      original: img,
+      bgUrl: `${noExt}_small.${ext}`,
+    };
+  })
+);
+
+const galleryItems = ref([])
+
+const vIntersect = {
+  mounted(el) {
+    const observer = new IntersectionObserver((entires) => {
+      entires.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = el.querySelector('img');
+          const onLoad = () => {
+            el.classList.add('loaded');
+            observer.unobserve(el);
+          };
+
+          if (img.complete) {
+            onLoad();
+          } else {
+            img.addEventListener('load', onLoad);
+          }
+        }
+      })
+    }, { threshold: 0.1 }); 
+    observer.observe(el);
+  }
+}
+
 
 onMounted(() => {
   imgs.forEach(key => {
     const img = new Image();
     img.src = homeGalleryImages[key].img;
   });
+
+  // LAZY LOADING WIP
+    galleryItems.value.forEach((item) => {
+    const imgToLoad = item.querySelector('img');
+    const loaded = () => item.classList.add('loaded');
+
+    if (img.complete) {
+      loaded();
+    } else {
+      imgToLoad.addEventListener('load', loaded);
+    }
+  })
 });
 </script>
 
@@ -93,12 +142,14 @@ onMounted(() => {
     <h2 class="home-gallery__title">Coś więcej niż dom. . .</h2>
   </div>
   <section class="home-gallery">
-    <div class="image-wrapper">
+    <div class="image-wrapper gallery-item" v-intersect>
       <div class="image-container">
         <img :src="currentImg" alt="Current Image" class="slide-image" :class="{
           'slide-out-left': slidingDirection === 'left',
           'slide-out-right': slidingDirection === 'right'
-        }">
+        }"
+        loading="lazy"
+        >
 
         <img v-if="nextImgPath" class="slide-image" :src="nextImgPath" alt="Next" :class="{
           'slide-in-right': slidingDirection === 'left',
@@ -125,6 +176,36 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* LAZY LOADING START */
+.gallery-item {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.gallery-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: pulse 3.5s infinite;
+  background-color: rgba(0, 0, 0);
+}
+
+.gallery-item.loaded::before {
+  animation: none;
+  content: none;
+}
+
+.gallery-item img {
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+}
+
+.gallery-item.loaded img {
+  opacity: 1;
+}
+/* LAZY LOADING END */
+
 .home-gallery {
   background-color: transparent;
   height: 100vh;

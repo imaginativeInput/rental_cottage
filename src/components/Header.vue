@@ -125,8 +125,8 @@ const reservationButtonClass = computed(() => {
 
 
 <template>
-  <div id="overlay" v-if="isMobileNav" @click="closeMobileNav"></div>
-  <header id="home" class="header container" :style="{ '--panorama-url': `url(${panorama})` }">
+  <div id="overlay" v-if="isMobileNav" @click="closeMobileNav"></div> <!-- :style="{ '--panorama-url': `url(${panorama})` }" -->
+  <header id="home" class="header container">
 
     <nav v-if="!isMobileNav" :class="['navbar', { 'hidden-nav': hideNavbar, 'scrolled-nav': scrolled }]">
       <ul>
