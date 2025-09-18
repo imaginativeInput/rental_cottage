@@ -53,7 +53,7 @@ import Contact from '../components/Contact.vue';
   left: 0;
   width: 100%;
   height: 120vh;
-  background: url('../assets/NZF_4359.jpg') no-repeat center/cover;
+  background: url('../assets/NZF_4359.avif') no-repeat center/cover;
   z-index: -1;
   filter: brightness(50%);
 }

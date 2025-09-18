@@ -1,6 +1,6 @@
 <script setup>
-import TatraMountainsGreen from '@/assets/gallery/NZF_4375.jpg';
-import tatraMountainsClean from '@/assets/gallery/NZF_4359.jpg';
+import TatraMountainsGreen from '@/assets/gallery/NZF_4375.avif';
+import tatraMountainsClean from '@/assets/gallery/NZF_4359.avif';
 </script>
 
 <template>

@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 
-import benches from '@/assets/gallery/fireplace02.jpg';
-import livingRoom from '@/assets/gallery/livingroom05-best.jpg';
-import room01 from '@/assets/gallery/bedroom01.jpg';
-import panorama01 from '@/assets/NZF_4359.jpg';
-import night01 from '@/assets/gallery/NZF_4375.jpg';
-import parkingLot from '@/assets/gallery/outside01.png';
-import rockMountains from '@/assets/gallery/NZF_4473.jpg';
+import benches from '@/assets/gallery/fireplace02.avif';
+import livingRoom from '@/assets/gallery/livingroom05-best.avif';
+import room01 from '@/assets/gallery/bedroom01.avif';
+import panorama01 from '@/assets/NZF_4359.avif';
+import night01 from '@/assets/gallery/NZF_4375.avif';
+import parkingLot from '@/assets/gallery/outside01.avif';
+import rockMountains from '@/assets/gallery/NZF_4473.avif';
 
 const homeGalleryImages = {
   benches01: { img: benches, description: 'Fireplace and benches outside with Tatra Mountains view' },

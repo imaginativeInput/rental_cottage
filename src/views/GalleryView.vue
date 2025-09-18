@@ -1,33 +1,86 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed } from 'vue';
 
 import Header from '@/components/Header.vue';
 
-import table01 from '@/assets/gallery/Mobile-livingroom03.jpg';
-import livingRoom02 from '@/assets/gallery/livingroom02.jpg';
-import kitchen02 from '@/assets/gallery/Mobile-kitchen02.jpg';
-import benches from '@/assets/gallery/fireplace02.jpg';
-import balcony01 from '@/assets/gallery/Mobile-livingroom-balcony01.jpg';
+const fullImgs = import.meta.glob('@/assets/gallery/*.avif', { eager: true, import: 'default' });
+const smallImgs = import.meta.glob('@/assets/gallery/*_small.{jpg,png}', { eager: true, import: 'default' });
 
-import tatraMountains from '@/assets/gallery/NZF_4359.jpg';
-import tatraMountainsGreen from '@/assets/gallery/NZF_4358.jpg';
-import tatraMountainsClean from '@/assets/gallery/NZF_4473.jpg';
-import tatraMountainsCleanOrange from '@/assets/gallery/NZF_4375.jpg';
-import tatraMountainsHousePanorama from '@/assets/gallery/outside01.png';
-import tatraMountainsClouds from '@/assets/gallery/NZF_4513.jpg';
-
-import bedroom01 from '@/assets/gallery/bedroom01.jpg';
-import mobileBalconyLivingroom01 from '@/assets/gallery/Mobile-balcony-livingroom01.jpg';
-
-const imgs = [
-  tatraMountainsCleanOrange,
-  table01, kitchen02, balcony01,
-  livingRoom02,
-  tatraMountainsHousePanorama, tatraMountainsGreen,
-  tatraMountainsClouds, tatraMountainsClean,
-  bedroom01, mobileBalconyLivingroom01,
-  benches, tatraMountains
+const imgOrder = [
+  'NZF_4375',
+  'Mobile-livingroom03',
+  'Mobile-kitchen02',
+  'Mobile-livingroom-balcony01',
+  'livingroom02',
+  'outside01',
+  'NZF_4358',
+  'NZF_4513',
+  'NZF_4473',
+  'bedroom01',
+  'Mobile-balcony-livingroom01',
+  'fireplace02',
+  'NZF_4359',
 ];
+
+// Keep the original keys from glob to help Vite's static analysis
+const fullImgKeys = Object.keys(fullImgs);
+const smallImgKeys = Object.keys(smallImgs);
+
+const processedImgs = computed(() => {
+  return imgOrder.map(name => {
+    // Find the full path key that includes the base name
+    const fullKey = fullImgKeys.find(key => key.includes(`/${name}.avif`));
+    
+    // Find the small path key that includes the base name
+    // This is more robust as it doesn't depend on the extension
+    const smallKey = smallImgKeys.find(key => key.includes(`/${name}_small.`));
+    
+    // Use the found key to access the URL from the original glob object
+    const originalUrl = fullKey ? fullImgs[fullKey] : null;
+    const smallUrl = smallKey ? smallImgs[smallKey] : null;
+
+    if (!smallUrl) {
+      console.warn(`[BUILD_DEBUG] No small image found for: ${name}`);
+    }
+
+    return {
+      original: originalUrl,
+      bgUrl: smallUrl, // This will now be the processed URL in the build
+    };
+  });
+});
+
+// const smallMap = Object.entries(smallImgs).reduce((acc, [path, url]) => {
+//   const filename = path.split('/').pop();  // e.g. "NZF_4375_small.jpg"
+//   const base = filename.replace('_small', '').replace(/\.(jpg|png)$/i, '');
+//   acc[base] = url;
+//   return acc;
+// }, {});
+
+// const processedImgs = computed(() => {
+//   return imgOrder.map(name => {
+//     const fullKey = `/src/assets/gallery/${name}.avif`;
+//     return {
+//       original: fullImgs[fullKey] || null,
+//       bgUrl: smallMap[name] || null
+//     };
+//   });
+// });
+
+
+
+// const processedImgs = computed(() => {
+//   return imgOrder.map(filename => {
+//     const fullKey = `/src/assets/gallery/${filename}`;
+//     const smallKeyJpg = fullKey.replace('.avif', '_small.jpg');
+//     const smallKeyPng = fullKey.replace('.avif', '_small.png');
+
+//     return {
+//       original: fullImgs[fullKey],
+//       bgUrl: smallImgs[smallKeyJpg] || smallImgs[smallKeyPng] || null
+//     };
+//   });
+// });
 
 
 const expandedIndex = ref(null);
@@ -35,16 +88,6 @@ const viewerSrc = ref('');
 const viewerVisible = ref(false);
 const isHovered = ref(false);
 
-const processedImgs = computed(() =>
-  imgs.map(img => {
-    const ext = img.split(".").pop();
-    const noExt = img.slice(0, -(ext.length + 1));
-    return {
-      original: img,
-      bgUrl: `${noExt}_small.${ext}`,
-    };
-  })
-);
 
 const elementStyle = computed(() => ({
   backgroundColor: isHovered.value ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0)',
@@ -60,7 +103,6 @@ const showImage = (src) => {
   viewerSrc.value = src;
   viewerVisible.value = true;
 };
-
 const closeViewer = () => {
   viewerVisible.value = false;
 };
@@ -83,7 +125,7 @@ const vIntersect = {
           }
         }
       })
-    }, { threshold: 0.1 }); 
+    }, { threshold: 0.1 });
     observer.observe(el);
   }
 }
@@ -92,8 +134,6 @@ const vIntersect = {
 <template>
 
   <span id="close" @click="closeViewer" v-if="viewerVisible">&times;</span>
-
-  <!-- Lightbox -->
   <div v-if="viewerVisible" class="lightbox" @click="closeViewer">
     <img :src="viewerSrc" alt="A gallery image">
   </div>
@@ -103,13 +143,10 @@ const vIntersect = {
     <h1 class="gallery__title">Galeria</h1>
     <div class="gallery__img-grid">
       <div v-for="(img, index) in processedImgs" :key="index"
-        :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]"
-        class="gallery-item"
+        :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]" class="gallery-item"
         :id="`img-${index}`" @click="showImage(img.original)" :style="{
           backgroundImage: `url(${img.bgUrl})`
-        }"
-        v-intersect
-        >
+        }" v-intersect>
         <img :src="img.original" :alt="img.original" :style="elementStyle" loading="lazy">
       </div>
     </div>
