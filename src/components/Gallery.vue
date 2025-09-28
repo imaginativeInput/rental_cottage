@@ -9,6 +9,52 @@ import night01 from '@/assets/gallery/NZF_4375.avif';
 import parkingLot from '@/assets/gallery/outside01.avif';
 import rockMountains from '@/assets/gallery/NZF_4473.avif';
 
+
+// ADDED CONTENT
+const fullImgs = import.meta.glob('@/assets/gallery/*.avif', { eager: true, import: 'default' });
+const smallImgs = import.meta.glob('@/assets/gallery/*_small.{jpg,png}', { eager: true, import: 'default' });
+
+const imgOrder = [
+  'NZF_4375',
+  'Mobile-livingroom03',
+  'Mobile-kitchen02',
+  'Mobile-livingroom-balcony01',
+  'livingroom02',
+  'outside01',
+  'NZF_4358',
+  'NZF_4513',
+  'NZF_4473',
+  'bedroom01',
+  'Mobile-balcony-livingroom01',
+  'fireplace02',
+  'NZF_4359',
+];
+
+const fullImgKeys = Object.keys(fullImgs);
+const smallImgKeys = Object.keys(smallImgs);
+
+const processedImgs = computed(() => {
+  return imgOrder.map(name => {
+    const fullKey = fullImgKeys.find(key => key.includes(`/${name}.avif`));
+    
+    const smallKey = smallImgKeys.find(key => key.includes(`/${name}_small.`));
+    
+    const originalUrl = fullKey ? fullImgs[fullKey] : null;
+    const smallUrl = smallKey ? smallImgs[smallKey] : null;
+
+    if (!smallUrl) {
+      console.warn(`[BUILD_DEBUG] No small image found for: ${name}`);
+    }
+
+    return {
+      original: originalUrl,
+      bgUrl: smallUrl,
+    };
+  });
+});
+// ADDED CONTENT END
+
+
 const homeGalleryImages = {
   benches01: { img: benches, description: 'Fireplace and benches outside with Tatra Mountains view' },
   livingRoom01: { img: livingRoom, description: 'Kitchen image' },
@@ -80,16 +126,16 @@ const handleAnimationEnd = () => {
 };
 
 // LAZY LOADING WIP
-const processedImgs = computed(() =>
-  imgs.map(img => {
-    const ext = img.split(".").pop();
-    const noExt = img.slice(0, -(ext.length + 1));
-    return {
-      original: img,
-      bgUrl: `${noExt}_small.${ext}`,
-    };
-  })
-);
+// const processedImgs = computed(() =>
+//   imgs.map(img => {
+//     const ext = img.split(".").pop();
+//     const noExt = img.slice(0, -(ext.length + 1));
+//     return {
+//       original: img,
+//       bgUrl: `${noExt}_small.${ext}`,
+//     };
+//   })
+// );
 
 const galleryItems = ref([])
 

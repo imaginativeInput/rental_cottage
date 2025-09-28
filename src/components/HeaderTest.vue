@@ -1,8 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-
-import lava from '@/assets/lawa.jpg';
 import panorama from '@/assets/panorama.jpg';
 
 const lastScrollY = ref(0);

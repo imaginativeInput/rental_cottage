@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePageStore } from '@/stores/isHomeStore';
+
 
 const props = defineProps({
   isOpen: {
@@ -14,6 +16,22 @@ const props = defineProps({
 });
 
 
+import { useMobileHeaderStore } from '@/stores/mobileHeaderStore';
+const mobileHeaderStore = useMobileHeaderStore();
+
+const { closeMobileNav } = mobileHeaderStore;
+
+const isMobileNav = ref(false);
+const animateClose = ref(false);
+
+const handleAnimationEnd = () => {
+  if (animateClose.value) {
+    isMobileNav.value = false;
+    animateClose.value = false;
+  }
+}
+
+const pageStore = usePageStore();
 const { t } = useI18n();
 const emit = defineEmits(['animationEnd']);
 const overlay = document.getElementById('overlay');
@@ -33,31 +51,49 @@ const callPhone = () => {
   window.location.href = 'tel:+48692434000';
 }
 
-const isReservationSection = ref(null);
+// const isReservationSection = ref(null);
 
-const scrollToReservation = () => {
-  isReservationSection.value?.scrollIntoView({ behavior: 'smooth' });
-}
+// const scrollToReservation = () => {
+//   isReservationSection.value?.scrollIntoView({ behavior: 'smooth' });
+// }
 
-const closeMobileNav = () => {
 
-  overlay.style.display = 'none';
-  mobileNav.style.display = 'none';
-  if (overlay && mobileNav) {
-    overlay.style.display = 'none';
-    mobileNav.style.display = 'none';
+const scrollToSection = (section) => {
+  const target = document.getElementById(`${section}`);
+  if (target) {
+    const yOffset = -64;
+    const yPosition = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: yPosition, behavior: 'smooth' });
+  }
+};
+
+const handleResevationClick = () => {
+  if (pageStore.isHome) {
+    scrollToSection('reservation-section');
+    console.log("You are on the home page")
+  } else {
+    router.push({ name: 'home' }).then(() => {
+      console.log("You are in the gallery")
+      scrollToSection('reservation-section');
+    })
   }
 }
+
+
 </script>
 
 <template>
-  <div id="mobile-nav" class="mobile-nav" :class="animationClass" @animationend="emit('animationEnd')">
+  <div id="mobile-nav" class="mobile-nav" :class="animationClass" @animationend="emit('animationEnd')"
+
+   :isOpen="isMobileNav" :animateClose="animateClose"
+    @animation-end="handleAnimationEnd"
+    >
     <div class="button-grid">
       <button id="phoneCallButton" class="btn header__btn" style="text-transform: uppercase;" @click="callPhone">
         {{ t('call') }}
       </button>
       <button id="reservationButton" class="btn header__btn" style="text-transform: uppercase;"
-        @click="scrollToReservation">
+        @click="handleResevationClick">
         {{ t('reservation') }}
       </button>
       <button id="mapsButton" class="btn header__btn" style="text-transform: uppercase;" @click="openGoogleMaps">
@@ -66,7 +102,7 @@ const closeMobileNav = () => {
     </div>
     <ul>
       <li>
-        <a href="/#home" @click="closeMobileNav">{{ t('homepage') }}</a>
+        <a href="/" @click="closeMobileNav || animateClose">{{ t('homepage') }}</a>
       </li>
       <li>
         <a href="/#o-nas" @click="closeMobileNav">{{ t('about') }}</a>
@@ -74,12 +110,6 @@ const closeMobileNav = () => {
       <li>
         <a href="/galeria">{{ t('gallery') }}</a>
       </li>
-      <!-- <li>
-        <a href="#atrakcje">Atrakcje</a>
-      </li> -->
-      <!-- <li>
-        <a href="#faq">FAQ</a>
-      </li> -->
       <li>
         <a href="#kontakt">{{ t('contact') }}</a>
       </li>

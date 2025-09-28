@@ -21,21 +21,22 @@ const imgOrder = [
   'fireplace02',
   'NZF_4359',
 ];
+console.log(`Images: ${imgOrder.length}`)
 
-// Keep the original keys from glob to help Vite's static analysis
 const fullImgKeys = Object.keys(fullImgs);
 const smallImgKeys = Object.keys(smallImgs);
 
+const expandedIndex = ref(null);
+const viewerSrc = ref('');
+const viewerVisible = ref(false);
+const isHovered = ref(false);
+
 const processedImgs = computed(() => {
   return imgOrder.map(name => {
-    // Find the full path key that includes the base name
     const fullKey = fullImgKeys.find(key => key.includes(`/${name}.avif`));
-    
-    // Find the small path key that includes the base name
-    // This is more robust as it doesn't depend on the extension
+
     const smallKey = smallImgKeys.find(key => key.includes(`/${name}_small.`));
-    
-    // Use the found key to access the URL from the original glob object
+
     const originalUrl = fullKey ? fullImgs[fullKey] : null;
     const smallUrl = smallKey ? smallImgs[smallKey] : null;
 
@@ -45,48 +46,62 @@ const processedImgs = computed(() => {
 
     return {
       original: originalUrl,
-      bgUrl: smallUrl, // This will now be the processed URL in the build
+      bgUrl: smallUrl,
     };
   });
 });
 
-// const smallMap = Object.entries(smallImgs).reduce((acc, [path, url]) => {
-//   const filename = path.split('/').pop();  // e.g. "NZF_4375_small.jpg"
-//   const base = filename.replace('_small', '').replace(/\.(jpg|png)$/i, '');
-//   acc[base] = url;
-//   return acc;
-// }, {});
+const getImgSource = () => {
+  const lightbox = document.getElementById('lightbox');
+  const img = lightbox.querySelector('img');
+  const imgSource = img.getAttribute('src');
+  return imgSource;
+}
 
-// const processedImgs = computed(() => {
-//   return imgOrder.map(name => {
-//     const fullKey = `/src/assets/gallery/${name}.avif`;
-//     return {
-//       original: fullImgs[fullKey] || null,
-//       bgUrl: smallMap[name] || null
-//     };
-//   });
-// });
+const getImgName = () => {
+  const imgSource = getImgSource();
+  const imgRegex = /([^\/]+)(?=\.[^.]+$)/
+  const match = imgSource.match(imgRegex);
+  return match[0];
+}
 
+const checkImgIndex = () => {
+  const currentImg = getImgName();
+  const imgIndex = imgOrder.indexOf(`${currentImg}`);
+  return imgIndex;
+}
 
+const nextImg = () => {
+  const imgSource = getImgSource();
+  let index = checkImgIndex();
+  let nextImgIndex = index + 1;
 
-// const processedImgs = computed(() => {
-//   return imgOrder.map(filename => {
-//     const fullKey = `/src/assets/gallery/${filename}`;
-//     const smallKeyJpg = fullKey.replace('.avif', '_small.jpg');
-//     const smallKeyPng = fullKey.replace('.avif', '_small.png');
+  if (nextImgIndex + 1 > (imgOrder.length)) {
+    nextImgIndex = 0;
+    console.log(`Index: ${index}`)
+    console.log(`nextIndex: ${nextImgIndex}`);
+  }
 
-//     return {
-//       original: fullImgs[fullKey],
-//       bgUrl: smallImgs[smallKeyJpg] || smallImgs[smallKeyPng] || null
-//     };
-//   });
-// });
+  const imgName = imgOrder[index];
+  const nextImgName = imgOrder[nextImgIndex];
+  const nextImgSource = imgSource.replace(imgName, nextImgName);
+  viewerSrc.value = nextImgSource;
+}
 
+const prevImg = () => {
+  const imgSource = getImgSource();
+  let index = checkImgIndex();
+  let nextImgIndex = index - 1;
 
-const expandedIndex = ref(null);
-const viewerSrc = ref('');
-const viewerVisible = ref(false);
-const isHovered = ref(false);
+  if ( nextImgIndex < 0 ) {
+    nextImgIndex = imgOrder.length - 1;
+  }
+
+  const imgName = imgOrder[index];
+  const nextImgName = imgOrder[nextImgIndex];
+  const nextImgSource = imgSource.replace(imgName, nextImgName);
+  viewerSrc.value = nextImgSource;
+}
 
 
 const elementStyle = computed(() => ({
@@ -134,8 +149,23 @@ const vIntersect = {
 <template>
 
   <span id="close" @click="closeViewer" v-if="viewerVisible">&times;</span>
-  <div v-if="viewerVisible" class="lightbox" @click="closeViewer">
-    <img :src="viewerSrc" alt="A gallery image">
+  <div v-if="viewerVisible" id="lightbox" class="lightbox">
+    <img :src="viewerSrc" id="img-big" alt="A gallery image" loading="lazy">
+
+    <button @click="prevImg" class="home-gallery-btn" id="prev-img-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow">
+        <path fill-rule="evenodd"
+          d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+          clip-rule="evenodd" />
+      </svg>
+    </button>
+    <button @click="nextImg" class="home-gallery-btn" id="next-img-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+          clip-rule="evenodd" />
+      </svg>
+    </button>
   </div>
 
   <Header :isLightTheme="true" />
@@ -184,6 +214,51 @@ const vIntersect = {
   height: 100%;
   text-decoration: none;
 }
+
+/* NEXT/PREV IMG BUTTON */
+.home-gallery-btn {
+  display: inline-block;
+  position: absolute;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: +0.05rem;
+
+  background-color: transparent;
+
+  padding: 0.5em 1em;
+  transition: transform 0.3s, color 0.3s, background-color 0.3s;
+  border: none;
+  color: rgba(235, 235, 235, 0.65);
+  z-index: 10004;
+
+  height: 100%;
+  width: 125px;
+}
+
+#prev-img-btn {
+  top: 0;
+  left: 0;
+  transition: transform 0.3s;
+}
+
+#next-img-btn {
+  top: 0;
+  right: 0;
+  transform: transform 0.3s;
+}
+
+#prev-img-btn:hover {
+  transform: translateX(-5px);
+  cursor: pointer;
+}
+
+#next-img-btn:hover {
+  transform: translateX(5px);
+  cursor: pointer;
+}
+
+/* NEXT/PREV IMG BUTTON END */
+
 
 .gallery-item {
   background-repeat: no-repeat;
@@ -277,7 +352,8 @@ const vIntersect = {
   position: fixed;
   top: 0.5rem;
   right: 1rem;
-  color: var(--clr-light);
+
+  color: rgba(235, 235, 235, 0.65);
   font-size: 3.5rem;
   z-index: 10003;
 }

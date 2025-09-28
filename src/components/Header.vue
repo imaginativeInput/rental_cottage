@@ -8,12 +8,25 @@ import { useI18n } from 'vue-i18n';
 
 import MobileHeader from './MobileHeader.vue';
 
+
 const props = defineProps({
   isLightTheme: {
     type: Boolean,
     default: false,
   },
 })
+
+// import { useMobileHeaderStore } from '@/stores/mobileHeaderStore';
+// const mobileHeaderStore = useMobileHeaderStore();
+
+// const {
+//   isMobileNav,
+//   animateClose,
+//   openMobileNav,
+//   closeMobileNav,
+//   handleAnimationEnd
+// } = mobileHeaderStore;
+
 
 const { t, locale, availableLocales } = useI18n({ useScope: 'global' });
 const route = useRoute();
@@ -96,7 +109,7 @@ const handleResevationClick = () => {
       scrollToSection('reservation-section');
     })
   }
-} 
+}
 
 const routeAndScroll = (url, section) => {
   router.push({ path: `${url}` }).then(() => {
@@ -125,7 +138,9 @@ const reservationButtonClass = computed(() => {
 
 
 <template>
-  <div id="overlay" v-if="isMobileNav" @click="closeMobileNav"></div> <!-- :style="{ '--panorama-url': `url(${panorama})` }" -->
+  <!-- <div id="overlay" v-if="isMobileNav" @click="closeMobileNav"></div> :style="{ '--panorama-url': `url(${panorama})` }" -->
+  <div id="overlay" v-if="isMobileNav" @click="closeMobileNav"></div>
+
   <header id="home" class="header container">
 
     <nav v-if="!isMobileNav" :class="['navbar', { 'hidden-nav': hideNavbar, 'scrolled-nav': scrolled }]">
@@ -150,11 +165,11 @@ const reservationButtonClass = computed(() => {
         </li>
         <li>
           <a :href="isHomePage ? '/galeria' : '#galeria'" class="header__link" :class="linkThemeClass">{{ t('gallery')
-          }}</a>
+            }}</a>
         </li>
         <li>
           <a :href="isHomePage ? '#kontakt' : '#kontakt'" class="header__link" :class="linkThemeClass">{{ t('contact')
-            }}</a>
+          }}</a>
         </li>
         <li class="header__line"></li>
         <li>
@@ -174,8 +189,15 @@ const reservationButtonClass = computed(() => {
     </nav>
   </header>
 
-  <MobileHeader v-if="isMobileNav || animateClose" :isOpen="isMobileNav" :animateClose="animateClose"
-    @animation-end="handleAnimationEnd" />
+  <!-- <MobileHeader v-if="isMobileNav || animateClose" :isOpen="isMobileNav" :animateClose="animateClose"
+    @animation-end="handleAnimationEnd" /> -->
+
+    <MobileHeader
+    v-if="isMobileNav || animateClose"
+    :isOpen="isMobileNav"
+    :animateClose="animateClose"
+    @animation-end="handleAnimationEnd"
+  />
 </template>
 
 <style scoped>
