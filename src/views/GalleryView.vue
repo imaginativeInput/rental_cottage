@@ -21,10 +21,27 @@ const imgOrder = [
   'fireplace02',
   'NZF_4359',
 ];
-console.log(`Images: ${imgOrder.length}`)
 
 const fullImgKeys = Object.keys(fullImgs);
 const smallImgKeys = Object.keys(smallImgs);
+
+const windowSize = 10;
+const startIndex = ref(0);
+
+const displayedImages = computed(() => {
+  return Array.from({ length: windowSize }, (_, i) => {
+    return imgOrder[(startIndex.value + i) % imgOrder.length];
+  });
+});
+
+function next() {
+  startIndex.value = (startIndex.value + 1) % imgOrder.length;
+}
+
+function prev() {
+  startIndex.value = (startIndex.value - 1 + imgOrder.length) % images.length;
+}
+
 
 const expandedIndex = ref(null);
 const viewerSrc = ref('');
@@ -86,6 +103,7 @@ const nextImg = () => {
   const nextImgName = imgOrder[nextImgIndex];
   const nextImgSource = imgSource.replace(imgName, nextImgName);
   viewerSrc.value = nextImgSource;
+  next();
 }
 
 const prevImg = () => {
@@ -93,7 +111,7 @@ const prevImg = () => {
   let index = checkImgIndex();
   let nextImgIndex = index - 1;
 
-  if ( nextImgIndex < 0 ) {
+  if (nextImgIndex < 0) {
     nextImgIndex = imgOrder.length - 1;
   }
 
@@ -101,6 +119,7 @@ const prevImg = () => {
   const nextImgName = imgOrder[nextImgIndex];
   const nextImgSource = imgSource.replace(imgName, nextImgName);
   viewerSrc.value = nextImgSource;
+  prev();
 }
 
 
@@ -147,40 +166,48 @@ const vIntersect = {
 </script>
 
 <template>
+  <div class="gallery-container" style="overflow: hidden">
+    <span id="close" @click="closeViewer" v-if="viewerVisible">&times;</span>
+    <div v-if="viewerVisible" id="lightbox" class="lightbox">
+      <img :src="viewerSrc" id="img-big" alt="A gallery image" loading="lazy">
 
-  <span id="close" @click="closeViewer" v-if="viewerVisible">&times;</span>
-  <div v-if="viewerVisible" id="lightbox" class="lightbox">
-    <img :src="viewerSrc" id="img-big" alt="A gallery image" loading="lazy">
+      <button @click="prevImg" class="home-gallery-btn" id="prev-img-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow">
+          <path fill-rule="evenodd"
+            d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+      <button @click="nextImg" class="home-gallery-btn" id="next-img-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
 
-    <button @click="prevImg" class="home-gallery-btn" id="prev-img-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow">
-        <path fill-rule="evenodd"
-          d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
-          clip-rule="evenodd" />
-      </svg>
-    </button>
-    <button @click="nextImg" class="home-gallery-btn" id="next-img-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path fill-rule="evenodd"
-          d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
-          clip-rule="evenodd" />
-      </svg>
-    </button>
-  </div>
-
-  <Header :isLightTheme="true" />
-  <div class="gallery__body" id="galeria">
-    <h1 class="gallery__title">Galeria</h1>
-    <div class="gallery__img-grid">
-      <div v-for="(img, index) in processedImgs" :key="index"
-        :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]" class="gallery-item"
-        :id="`img-${index}`" @click="showImage(img.original)" :style="{
-          backgroundImage: `url(${img.bgUrl})`
-        }" v-intersect>
-        <img :src="img.original" :alt="img.original" :style="elementStyle" loading="lazy">
+      <div id="small-img-grid" class="small-img-grid">
+        <div v-for="(img, i) in displayedImages" :key="i" class="img-item">
+          <img :src="`/src/assets/gallery/${img}.avif` || `/src/assets/gallery/${img}.png`" class="img-viewer-small-img"
+            alt="image" @click="viewerSrc = `/src/assets/gallery/${img}.avif`"></img>
+        </div>
       </div>
     </div>
 
+    <Header :isLightTheme="true" />
+    <div class="gallery__body" id="galeria">
+      <h1 class="gallery__title">Galeria</h1>
+      <div class="gallery__img-grid">
+        <div v-for="(img, index) in processedImgs" :key="index"
+          :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]" class="gallery-item"
+          :id="`img-${index}`" @click="showImage(img.original)" :style="{
+            backgroundImage: `url(${img.bgUrl})`
+          }" v-intersect>
+          <img :src="img.original" :alt="img.original" :style="elementStyle" loading="lazy">
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -192,18 +219,19 @@ const vIntersect = {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 1);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10002;
 }
 
-.lightbox img {
+.lightbox #img-big {
   max-width: 90%;
   max-height: 90%;
-  border-radius: 8px;
+  border-radius: 2px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2rem;
 }
 
 .lightbox .close {
@@ -215,10 +243,30 @@ const vIntersect = {
   text-decoration: none;
 }
 
+.small-img-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1rem);
+  position: absolute;
+  bottom: 0rem;
+  left: 50%;
+  transform: translateX(-50%) scale(3);
+  background-color: black;
+  gap: 0.1rem;
+}
+
+.img-viewer-small-img img {
+  width: 100%;
+  height: auto;
+}
+
+.img-viewer-small-img:hover {
+  cursor: pointer;
+}
+
 /* NEXT/PREV IMG BUTTON */
 .home-gallery-btn {
   display: inline-block;
-  position: absolute;
+  position: fixed;
   font-weight: 600;
   text-decoration: none;
   letter-spacing: +0.05rem;
@@ -226,6 +274,8 @@ const vIntersect = {
   background-color: transparent;
 
   padding: 0.5em 1em;
+  padding-inline: 0;
+
   transition: transform 0.3s, color 0.3s, background-color 0.3s;
   border: none;
   color: rgba(235, 235, 235, 0.65);
@@ -233,6 +283,10 @@ const vIntersect = {
 
   height: 100%;
   width: 125px;
+}
+
+.home-gallery-btn:hover {
+  color: var(--clr-warm-beige-400);
 }
 
 #prev-img-btn {
@@ -351,7 +405,7 @@ const vIntersect = {
 #close {
   position: fixed;
   top: 0.5rem;
-  right: 1rem;
+  right: 2rem;
 
   color: rgba(235, 235, 235, 0.65);
   font-size: 3.5rem;
@@ -361,7 +415,8 @@ const vIntersect = {
 #close:hover,
 #close:focus {
   cursor: pointer;
-  opacity: 0.6;
+  /* opacity: 0.6; */
+  color: var(--clr-warm-beige-400)
 }
 
 @keyframes pulse {
