@@ -107,7 +107,7 @@ onUnmounted(() => {
 
         <!-- Full-width Questions -->
         <div class="form-group full-width form-textarea">
-          <label for="questions">Questions</label>
+          <label for="questions">Zadaj pytanie!</label>
           <textarea id="message" v-model="questions" :maxlength="maxChars" placeholder="Jakieś pytania? Napisz a rozwiejemy wątpliwości."
             class="form-input"></textarea>
           <small class="char-counter">{{ questions.length }} / {{ maxChars }}</small>
