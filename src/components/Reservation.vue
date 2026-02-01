@@ -228,9 +228,9 @@ onUnmounted(() => {
 
     <div class="message-field">
       <span>{{ t('anyQuestions') }} {{ t('messageUs') }}</span>
-      <textarea id="message-input-popUpForm" class="message-input" placeholder="Napisz wiadomość..."
+      <textarea id="message-input-popUpForm" ref="textareaRef" class="message-input" placeholder="Napisz wiadomość..."
         maxlength="500"></textarea>
-      <p id="charCount">0/500 znaków</p>
+      <p id="charCount" ref="charCountRef">0/500 znaków</p>
     </div>
     <button class="send-btn"
       @click="sendReservationRequest('email-input-popUpForm', 'phone-input-popUpForm', 'message-input-popUpForm')">
@@ -401,42 +401,48 @@ li {
 /* RESERVATION POP UP FORM */
 .reservation-popup-form {
   position: fixed;
-  width: 100%;
-  height: 600px;
+  width: calc(100% - 2rem);
+  max-width: 500px;
   display: none;
 
   top: 50%;
   left: 50%;
-
   transform: translate(-50%, -50%);
 
   background-color: var(--clr-light);
-  background-color: white;
   color: var(--clr-dark);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
 
   z-index: 10000;
-  font-size: large;
-  letter-spacing: +0.05rem;
+  padding: 1.5rem;
+}
+
+.user-data-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
 }
 
 .email-field {
-  margin-top: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-
-  flex: 1;
   display: flex;
-
   align-items: center;
-  gap: 0.5rem;
-  border: 1px solid var(--clr-dark);
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
-  background-color: #fff;
-  width: 270px;
+  gap: 0.75rem;
+  border: 1px solid var(--clr-slate400);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  background-color: white;
+  transition: border-color 0.3s;
 }
 
+.email-field:focus-within {
+  border-color: var(--clr-warm-beige-600);
+}
 
+.email-field svg {
+  flex-shrink: 0;
+}
 
 .email-input {
   flex-grow: 1;
@@ -445,80 +451,85 @@ li {
   background-color: transparent;
   font-size: 1rem;
   width: 100%;
+  color: var(--clr-dark);
 }
 
-
-.email-input:focus {
-  background-color: var(--clr-light);
+.email-input::placeholder {
+  color: var(--clr-slate400);
 }
 
 .message-field {
-  margin-top: 2rem;
-  margin-left: 2rem;
-
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message-field span {
+  font-weight: 600;
+  color: var(--clr-slate600);
+  font-size: var(--size-sm);
 }
 
 .message-input {
-  height: 17.5rem;
-  width: calc(100% - 2rem);
-
-  padding: 10px;
+  height: 10rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
   font-size: 1rem;
-  border: 1px solid #333;
+  border: 1px solid var(--clr-slate400);
   border-radius: 6px;
   resize: none;
   box-sizing: border-box;
-
-  overflow-x: hidden;
+  background-color: white;
+  color: var(--clr-dark);
+  transition: border-color 0.3s;
   overflow-y: auto;
 }
 
 .message-input:focus {
-  background-color: var(--clr-light);
+  outline: none;
+  border-color: var(--clr-warm-beige-600);
+}
+
+.message-input::placeholder {
+  color: var(--clr-slate400);
+}
+
+#charCount {
+  text-align: right;
+  font-size: var(--size-xs);
+  color: var(--clr-slate600);
+  margin: 0;
 }
 
 .send-btn {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  margin-bottom: 0.5rem;
-  margin-right: 0.5rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.9rem 1.5rem;
 
   text-transform: uppercase;
   letter-spacing: +0.05rem;
-
-  height: 3rem;
-  width: 8rem;
-
-  font: var(--size-xl);
+  font-size: var(--size-base);
   font-weight: 600;
 
   color: var(--clr-light);
-  background-color: var(--clr-dark);
+  background-color: var(--clr-warm-beige-600);
 
-  transition: transform 0.3s, color 0.3s, background-color 0.3s;
+  transition: transform 0.2s, background-color 0.3s;
   border: none;
   border-radius: 6px;
+  cursor: pointer;
 
-  text-align: center;
-  justify-content: center;
-
-  box-shadow: 0 1px 5px var(--clr-dark);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .send-btn:hover {
-  background-color: var(--clr-warm-beige-600);
-  cursor: pointer;
-  transform: translate(0, -5px);
+  background-color: var(--clr-warm-beige-800);
+  transform: translateY(-2px);
 }
 
-.user-data-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
+.send-btn:active {
+  transform: translateY(0);
 }
 
 /* RESERVATION POP UP FORM END */
@@ -526,10 +537,6 @@ li {
 @media (min-width: 475px) {
   .rezerwacja__form {
     width: 400px;
-  }
-
-  .email-input {
-    width: 250px;
   }
 }
 
@@ -547,28 +554,21 @@ li {
     flex-direction: row;
   }
 
-  .email-field {
-    width: 32%;
+  .reservation-popup-form {
+    max-width: 560px;
+    padding: 2rem;
   }
 }
 
 @media (min-width: 768px) {
-  .message-input {
-    width: 640px;
-    font-size: 1.2rem;
-  }
-
   .reservation-popup-form {
-    width: 700px;
-    height: 620px;
-
-    border-radius: 12px;
+    max-width: 600px;
+    border-radius: 0.75rem;
   }
 
-  .email-input {
-    width: 280px;
+  .message-input {
+    height: 12rem;
   }
-
 }
 
 @media (min-width: 1024px) {
@@ -589,15 +589,14 @@ li {
     width: 98.588px;
   }
 
-  .message-input {
-    width: 740px;
-  }
-
   .reservation-popup-form {
-    width: 800px;
-    height: 600px;
+    max-width: 640px;
+    padding: 2.5rem;
   }
 
+  .send-btn {
+    font-size: var(--size-lg);
+  }
 }
 
 

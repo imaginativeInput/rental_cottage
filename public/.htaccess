@@ -1,3 +1,4 @@
+# Vue Router SPA fallback - serves index.html for all unknown routes
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.html$ - [L]
@@ -11,13 +12,6 @@ RewriteRule . /index.html [L]
     Header set Pragma "no-cache"
     Header set Expires "0"
 </FilesMatch>
-
-# Also disable caching for the root index (in case it's served without .html extension)
-<Files "index.html">
-    Header set Cache-Control "no-cache, no-store, must-revalidate"
-    Header set Pragma "no-cache"
-    Header set Expires "0"
-</Files>
 
 # Enable long-term caching for hashed assets (JS, CSS) - they have unique names when content changes
 <FilesMatch "\.(js|css)$">
