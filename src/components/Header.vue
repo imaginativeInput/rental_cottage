@@ -197,6 +197,7 @@ const reservationButtonClass = computed(() => {
     :isOpen="isMobileNav"
     :animateClose="animateClose"
     @animation-end="handleAnimationEnd"
+    @close="closeMobileNav"
   />
 </template>
 

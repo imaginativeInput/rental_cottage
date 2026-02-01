@@ -22,6 +22,7 @@ const imgOrder = [
   'NZF_4359',
 ];
 
+
 const fullImgKeys = Object.keys(fullImgs);
 const smallImgKeys = Object.keys(smallImgs);
 
@@ -39,7 +40,7 @@ function next() {
 }
 
 function prev() {
-  startIndex.value = (startIndex.value - 1 + imgOrder.length) % images.length;
+  startIndex.value = (startIndex.value - 1 + imgOrder.length) % imgOrder.length;
 }
 
 
@@ -47,11 +48,11 @@ const expandedIndex = ref(null);
 const viewerSrc = ref('');
 const viewerVisible = ref(false);
 const isHovered = ref(false);
+const currentViewerIndex = ref(0);
 
 const processedImgs = computed(() => {
-  return imgOrder.map(name => {
+  return imgOrder.map((name, index) => {
     const fullKey = fullImgKeys.find(key => key.includes(`/${name}.avif`));
-
     const smallKey = smallImgKeys.find(key => key.includes(`/${name}_small.`));
 
     const originalUrl = fullKey ? fullImgs[fullKey] : null;
@@ -64,62 +65,36 @@ const processedImgs = computed(() => {
     return {
       original: originalUrl,
       bgUrl: smallUrl,
+      name: name,
+      index: index,
     };
   });
 });
 
-const getImgSource = () => {
-  const lightbox = document.getElementById('lightbox');
-  const img = lightbox.querySelector('img');
-  const imgSource = img.getAttribute('src');
-  return imgSource;
-}
-
-const getImgName = () => {
-  const imgSource = getImgSource();
-  const imgRegex = /([^\/]+)(?=\.[^.]+$)/
-  const match = imgSource.match(imgRegex);
-  return match[0];
-}
-
-const checkImgIndex = () => {
-  const currentImg = getImgName();
-  const imgIndex = imgOrder.indexOf(`${currentImg}`);
-  return imgIndex;
-}
+const getImageByName = (name) => {
+  const fullKey = fullImgKeys.find(key => key.includes(`/${name}.avif`));
+  return fullKey ? fullImgs[fullKey] : null;
+};
 
 const nextImg = () => {
-  const imgSource = getImgSource();
-  let index = checkImgIndex();
-  let nextImgIndex = index + 1;
-
-  if (nextImgIndex + 1 > (imgOrder.length)) {
-    nextImgIndex = 0;
-    console.log(`Index: ${index}`)
-    console.log(`nextIndex: ${nextImgIndex}`);
-  }
-
-  const imgName = imgOrder[index];
-  const nextImgName = imgOrder[nextImgIndex];
-  const nextImgSource = imgSource.replace(imgName, nextImgName);
-  viewerSrc.value = nextImgSource;
-  next();
+  currentViewerIndex.value = (currentViewerIndex.value + 1) % imgOrder.length;
+  const nextImgName = imgOrder[currentViewerIndex.value];
+  viewerSrc.value = getImageByName(nextImgName);
+  startIndex.value = currentViewerIndex.value;
 }
 
 const prevImg = () => {
-  const imgSource = getImgSource();
-  let index = checkImgIndex();
-  let nextImgIndex = index - 1;
+  currentViewerIndex.value = (currentViewerIndex.value - 1 + imgOrder.length) % imgOrder.length;
+  const prevImgName = imgOrder[currentViewerIndex.value];
+  viewerSrc.value = getImageByName(prevImgName);
+  startIndex.value = currentViewerIndex.value;
+}
 
-  if (nextImgIndex < 0) {
-    nextImgIndex = imgOrder.length - 1;
-  }
-
+const goToImage = (index) => {
+  currentViewerIndex.value = index;
   const imgName = imgOrder[index];
-  const nextImgName = imgOrder[nextImgIndex];
-  const nextImgSource = imgSource.replace(imgName, nextImgName);
-  viewerSrc.value = nextImgSource;
-  prev();
+  viewerSrc.value = getImageByName(imgName);
+  startIndex.value = index;
 }
 
 
@@ -133,8 +108,10 @@ const elementStyle = computed(() => ({
 }))
 
 
-const showImage = (src) => {
+const showImage = (src, index) => {
   viewerSrc.value = src;
+  currentViewerIndex.value = index;
+  startIndex.value = index;
   viewerVisible.value = true;
 };
 const closeViewer = () => {
@@ -187,9 +164,10 @@ const vIntersect = {
       </button>
 
       <div id="small-img-grid" class="small-img-grid">
-        <div v-for="(img, i) in displayedImages" :key="i" class="img-item">
-          <img :src="`/src/assets/gallery/${img}.avif` || `/src/assets/gallery/${img}.png`" class="img-viewer-small-img"
-            alt="image" @click="viewerSrc = `/src/assets/gallery/${img}.avif`"></img>
+        <div v-for="(imgName, i) in displayedImages" :key="i" class="img-item"
+          :class="{ 'active-thumb': imgOrder.indexOf(imgName) === currentViewerIndex }">
+          <img :src="getImageByName(imgName)" class="img-viewer-small-img"
+            alt="thumbnail" @click="goToImage(imgOrder.indexOf(imgName))">
         </div>
       </div>
     </div>
@@ -200,10 +178,10 @@ const vIntersect = {
       <div class="gallery__img-grid">
         <div v-for="(img, index) in processedImgs" :key="index"
           :class="[`img-${index}`, 'img-container', { expanded: expandedIndex === index }]" class="gallery-item"
-          :id="`img-${index}`" @click="showImage(img.original)" :style="{
+          :id="`img-${index}`" @click="showImage(img.original, index)" :style="{
             backgroundImage: `url(${img.bgUrl})`
           }" v-intersect>
-          <img :src="img.original" :alt="img.original" :style="elementStyle" loading="lazy">
+          <img :src="img.original" :alt="img.name" :style="elementStyle" loading="lazy">
         </div>
       </div>
 
@@ -261,6 +239,11 @@ const vIntersect = {
 
 .img-viewer-small-img:hover {
   cursor: pointer;
+}
+
+.img-item.active-thumb {
+  border: 2px solid var(--clr-warm-beige-400);
+  border-radius: 2px;
 }
 
 /* NEXT/PREV IMG BUTTON */

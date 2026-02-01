@@ -33,7 +33,7 @@ const handleAnimationEnd = () => {
 
 const pageStore = usePageStore();
 const { t } = useI18n();
-const emit = defineEmits(['animationEnd']);
+const emit = defineEmits(['animationEnd', 'close']);
 const overlay = document.getElementById('overlay');
 const mobileNav = document.getElementById('mobile-nav');
 
@@ -89,29 +89,29 @@ const handleResevationClick = () => {
     @animation-end="handleAnimationEnd"
     >
     <div class="button-grid">
-      <button id="phoneCallButton" class="btn header__btn" style="text-transform: uppercase;" @click="callPhone">
+      <button id="phoneCallButton" class="btn header__btn" style="text-transform: uppercase;" @click="callPhone(); emit('close')">
         {{ t('call') }}
       </button>
       <button id="reservationButton" class="btn header__btn" style="text-transform: uppercase;"
-        @click="handleResevationClick">
+        @click="handleResevationClick(); emit('close')">
         {{ t('reservation') }}
       </button>
-      <button id="mapsButton" class="btn header__btn" style="text-transform: uppercase;" @click="openGoogleMaps">
+      <button id="mapsButton" class="btn header__btn" style="text-transform: uppercase;" @click="openGoogleMaps(); emit('close')">
         {{ t('navigate') }}
       </button>
     </div>
     <ul>
       <li>
-        <a href="/" @click="closeMobileNav || animateClose">{{ t('homepage') }}</a>
+        <a href="/" @click="emit('close')">{{ t('homepage') }}</a>
       </li>
       <li>
-        <a href="/#o-nas" @click="closeMobileNav">{{ t('about') }}</a>
+        <a href="/#o-nas" @click="emit('close')">{{ t('about') }}</a>
       </li>
       <li>
-        <a href="/galeria">{{ t('gallery') }}</a>
+        <a href="/galeria" @click="emit('close')">{{ t('gallery') }}</a>
       </li>
       <li>
-        <a href="#kontakt">{{ t('contact') }}</a>
+        <a href="#kontakt" @click="emit('close')">{{ t('contact') }}</a>
       </li>
     </ul>
   </div>

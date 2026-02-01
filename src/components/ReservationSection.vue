@@ -3,17 +3,19 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useScreens } from 'vue-screen-utils';
 
 import { useI18n } from 'vue-i18n';
+import { useGuestStore } from '@/stores/guestStore';
 import { dateRange, sendReservationRequest } from '@/utils/reservationRequest';
 
 // Regex patterns
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\+\d{1,3}(\s?\d{3}){2,3}$/
 
+// Use shared guest store
+const guestStore = useGuestStore();
+
 // Form state
-const people = ref(1);
 const email = ref("");
 const phone = ref("");
-// const dateRange = ref({ start: null, end: null });
 const questions = ref("");
 
 // Computed properties
@@ -75,8 +77,8 @@ onUnmounted(() => {
         <div class="form-row">
           <div class="form-group">
             <label for="people">Liczba Osób</label>
-            <select id="people" v-model="people" class="form-input">
-              <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+            <select id="people" v-model="guestStore.peopleCount" class="form-input">
+              <option v-for="n in 13" :key="n" :value="n">{{ n }}</option>
             </select>
           </div>
 

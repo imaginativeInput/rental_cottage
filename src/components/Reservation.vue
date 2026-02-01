@@ -22,7 +22,7 @@ const today = date.getDate();
 const tomorrow = today + 1;
 const year = date.getFullYear();
 const monthFirstLetters = months[month].substr(0, 3);
-const dateTomorrow = ref(`${today + 1} ${monthFirstLetters} ${year}`);
+const dateTomorrow = ref(`${String(today + 1).padStart(2, '0')} ${monthFirstLetters} ${year}`);
 const startDateNumber = ref(null);
 const endDateNumber = ref(null);
 
@@ -99,7 +99,7 @@ const formattedStartDate = computed(() => {
   const { start, end } = dateRange.value;
   if (start && end) {
     const startDate = start.toLocaleDateString('pl-PL', {
-      day: 'numeric',
+      day: '2-digit',
       month: 'short',
       year: 'numeric',
     });
@@ -112,7 +112,7 @@ const formattedEndDate = computed(() => {
   const { start, end } = dateRange.value;
   if (start && end) {
     const endDate = end.toLocaleDateString('pl-PL', {
-      day: 'numeric',
+      day: '2-digit',
       month: 'short',
       year: 'numeric',
     });
@@ -242,8 +242,7 @@ onUnmounted(() => {
   <section class=" rezerwacja section">
     <div class="rezerwacja__form" id="formCalendar">
       <div class="rezerwacja__date" id="arrival" @click="calendarStore.toggleCalendar()">
-        <span v-if="startDateNumber < 10">0{{ formattedStartDate }}</span>
-        <span v-else="">{{ formattedStartDate }}</span>
+        <span>{{ formattedStartDate }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
           style="margin-left: -1rem;width: 6rem; height: 3rem;" class="arrow">
           <path fill-rule="evenodd"
@@ -251,8 +250,7 @@ onUnmounted(() => {
             clip-rule="evenodd" class="arrow" />
         </svg>
 
-        <span v-if="endDateNumber + 1 < 10">0{{ formattedEndDate ? formattedEndDate : dateTomorrow }}</span>
-        <span v-else="">{{ formattedEndDate ? formattedEndDate : dateTomorrow }}</span>
+        <span>{{ formattedEndDate ? formattedEndDate : dateTomorrow }}</span>
       </div>
       <div class="rezerwacja__guests" id="guestsButton">{{ guestStore.peopleCount }} {{
         numberOfPeople(guestStore.peopleCount) }}
