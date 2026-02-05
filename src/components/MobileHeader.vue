@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePageStore } from '@/stores/isHomeStore';
+import router from '@/router';
 
 
 const props = defineProps({
