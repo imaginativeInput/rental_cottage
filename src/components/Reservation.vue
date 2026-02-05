@@ -264,12 +264,13 @@ onUnmounted(() => {
 
         <span>{{ formattedEndDate ? formattedEndDate : dateTomorrow }}</span>
       </div>
-      <div class="rezerwacja__guests" id="guestsButton">{{ guestStore.peopleCount }} {{
-        numberOfPeople(guestStore.peopleCount) }}
-        <div id="guest-dropdown-menu" class="dropdown-content">
+      <div class="rezerwacja__guests" id="guestsButton" @mouseenter="isDropdown = true"
+        @mouseleave="isDropdown = false">{{ guestStore.peopleCount }} {{
+          numberOfPeople(guestStore.peopleCount) }}
+        <div id="guest-dropdown-menu" class="dropdown-content" v-show="isDropdown">
           <ul class="guest-ul">
             <li v-for="n in guestLimit" :key="n" :class="{ 'guest-li': true, 'active': guestStore.peopleCount === n }"
-              @click="guestStore.peopleCount = n">
+              @click="guestStore.peopleCount = n; isDropdown = false">
               {{ n }}
             </li>
           </ul>
@@ -375,16 +376,12 @@ li {
 }
 
 .dropdown-content {
-  display: none;
+  display: flex;
+  align-self: flex-start;
   position: absolute;
   box-shadow: 0 8px 16px 0px rgba(0, 0, 0, 0.3);
   z-index: 1;
   margin-top: 60px;
-}
-
-.rezerwacja__guests:hover .dropdown-content {
-  display: flex;
-  align-self: flex-start;
 }
 
 .guest-ul {
