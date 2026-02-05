@@ -23,7 +23,7 @@ const isEmailValid = computed(() => emailRegex.test(email.value))
 const isPhoneValid = computed(() => phoneRegex.test(phone.value))
 
 // Config
-const maxChars = 300;
+const maxChars = 500;
 const { t } = useI18n();
 
 // Calendar adjustments
@@ -221,21 +221,23 @@ textarea {
 .submit-btn {
   padding: 0.8rem 1.5rem;
   background: var(--clr-warm-beige-600);
-  color: var(--clr-dark);
+  color: var(--clr-light);
   width: 100%;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
-  transition: background 0.3s, color 0.3s;
+  transition: transform 0.2s, background-color 0.3s ease;
   letter-spacing: 0.05rem;
   font-size: var(--size-lg);
+
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .submit-btn:hover {
   background: var(--clr-warm-beige-800);
-  color: var(--clr-light);
+  transform: translateY(-2px);
 }
 
 /* Responsive */
