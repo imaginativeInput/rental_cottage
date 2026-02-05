@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useScreens } from 'vue-screen-utils';
 import { useI18n } from 'vue-i18n';
@@ -75,7 +75,19 @@ const masks = {
   input: 'DD MMM YYYY',
 }
 
-
+watch(dateRange, (newValue) => {
+  if (calendarStore.isCalendarVisible && newValue.start && newValue.end) {
+    const start = new Date(newValue.start).getTime()
+    const end = new Date(newValue.end).getTime()
+    if (start !== end) {
+      setTimeout(() => {
+        if (calendarStore.isCalendarVisible) {
+          calendarStore.isCalendarVisible = false
+        }
+      }, 300)
+    }
+  }
+}, { deep: true })
 
 const expanded = ref(null);
 const width = ref(window.innerWidth);
@@ -227,7 +239,7 @@ onUnmounted(() => {
     </div>
 
     <div class="message-field">
-      <span>{{ t('anyQuestions') }} {{ t('messageUs') }}</span>
+      <span>{{ t('askQuestion') }}</span>
       <textarea id="message-input-popUpForm" ref="textareaRef" class="message-input" placeholder="Napisz wiadomość..."
         maxlength="500"></textarea>
       <p id="charCount" ref="charCountRef">0/500 znaków</p>
