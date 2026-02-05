@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 import Header from '@/components/Header.vue';
 
@@ -117,6 +117,15 @@ const showImage = (src, index) => {
 const closeViewer = () => {
   viewerVisible.value = false;
 };
+
+const handleKeydown = (e) => {
+  if (!viewerVisible.value) return
+  if (e.key === 'ArrowLeft') prevImg()
+  if (e.key === 'ArrowRight') nextImg()
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 const vIntersect = {
   mounted(el) {
