@@ -721,13 +721,15 @@ onUnmounted(() => {
 
 /* Summary chip */
 .summary {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem 0.6rem;
+  max-width: 100%;
   background: var(--clr-warm-beige-200);
   color: var(--clr-warm-beige-800);
   padding: 0.6rem 1rem;
-  border-radius: 999px;
+  border-radius: 1rem;
   font-size: var(--size-sm);
   font-weight: 500;
   align-self: flex-start;
