@@ -10,13 +10,6 @@ export const dateRange = ref({
   end: new Date(),
 })
 
-// export const peopleCount = ref(2)
-export const formVisible = ref(false)
-
-export const closeForm = () => {
-  formVisible.value = false
-}
-
 export const isDropdown = ref(false)
 
 export const sendReservationRequest = async (emailID, phoneID, messageID) => {
@@ -60,7 +53,6 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
     if (response.ok) {
       const result = await response.json()
       alert('Wiadomość została wysłana pomyślnie: ' + result.message)
-      closeForm()
     } else {
       const error = await response.json()
       alert('Błąd podczas wysyłania wiadomości: ' + (error.detail || 'Nieznany błąd.'))
