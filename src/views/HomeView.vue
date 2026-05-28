@@ -35,8 +35,8 @@ import Contact from '../components/Contact.vue';
         <Reservation />
         <About />
         <Gallery />
+        <Attractions />
         <ReservationSection />
-        <!-- <Attractions /> -->
         <!-- <Contact /> -->
       </main>
     </div>
