@@ -76,26 +76,31 @@ const getImageByName = (name) => {
   return fullKey ? fullImgs[fullKey] : null;
 };
 
-const nextImg = () => {
-  currentViewerIndex.value = (currentViewerIndex.value + 1) % imgOrder.length;
-  const nextImgName = imgOrder[currentViewerIndex.value];
-  viewerSrc.value = getImageByName(nextImgName);
-  startIndex.value = currentViewerIndex.value;
-}
+// Heavy originals live in /public/gallery-hd/ — served at site root, NOT
+// bundled. The light version (bundled, lower quality) is shown first; the
+// HD version is fetched on demand and swapped in once it loads.
+const getHDImageByName = (name) => `/gallery-hd/${name}.avif`;
 
-const prevImg = () => {
-  currentViewerIndex.value = (currentViewerIndex.value - 1 + imgOrder.length) % imgOrder.length;
-  const prevImgName = imgOrder[currentViewerIndex.value];
-  viewerSrc.value = getImageByName(prevImgName);
-  startIndex.value = currentViewerIndex.value;
-}
-
-const goToImage = (index) => {
+const setViewerImage = (index) => {
   currentViewerIndex.value = index;
-  const imgName = imgOrder[index];
-  viewerSrc.value = getImageByName(imgName);
   startIndex.value = index;
-}
+  const name = imgOrder[index];
+  // Show light version immediately
+  viewerSrc.value = getImageByName(name);
+  // Then load HD in background; swap only if user is still on this image
+  const hd = new Image();
+  const hdUrl = getHDImageByName(name);
+  hd.onload = () => {
+    if (imgOrder[currentViewerIndex.value] === name) {
+      viewerSrc.value = hdUrl;
+    }
+  };
+  hd.src = hdUrl;
+};
+
+const nextImg = () => setViewerImage((currentViewerIndex.value + 1) % imgOrder.length);
+const prevImg = () => setViewerImage((currentViewerIndex.value - 1 + imgOrder.length) % imgOrder.length);
+const goToImage = (index) => setViewerImage(index);
 
 
 const elementStyle = computed(() => ({
@@ -108,10 +113,8 @@ const elementStyle = computed(() => ({
 }))
 
 
-const showImage = (src, index) => {
-  viewerSrc.value = src;
-  currentViewerIndex.value = index;
-  startIndex.value = index;
+const showImage = (_src, index) => {
+  setViewerImage(index);
   viewerVisible.value = true;
 };
 const closeViewer = () => {
