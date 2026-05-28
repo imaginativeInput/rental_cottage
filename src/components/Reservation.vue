@@ -182,8 +182,9 @@ onUnmounted(() => {
           numberOfPeople(guestStore.peopleCount) }}
         <div id="guest-dropdown-menu" class="dropdown-content" v-show="isDropdown">
           <ul class="guest-ul">
-            <li v-for="n in guestLimit" :key="n" :class="{ 'guest-li': true, 'active': guestStore.peopleCount === n }"
-              @click="guestStore.peopleCount = n; isDropdown = false">
+            <li v-for="n in guestLimit" :key="n"
+              :class="{ 'guest-li': true, 'active': guestStore.peopleCount === n, 'guest-li--disabled': n + guestStore.childrenCount > guestLimit }"
+              @click="n + guestStore.childrenCount > guestLimit ? null : (guestStore.peopleCount = n, isDropdown = false)">
               {{ n }}
             </li>
           </ul>
@@ -314,6 +315,14 @@ li {
   cursor: pointer;
   background-color: var(--clr-slate200);
   background-color: var(--clr-warm-beige-200);
+}
+
+.guest-li--disabled,
+.guest-li--disabled:hover {
+  color: var(--clr-slate400);
+  background-color: var(--clr-light);
+  cursor: not-allowed;
+  text-decoration: line-through;
 }
 
 .guest-li-none {

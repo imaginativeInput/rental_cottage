@@ -44,10 +44,15 @@ const nightsLabel = computed(() => {
 });
 const hasValidRange = computed(() => nightsCount.value > 0);
 
+// Combined capacity: adults + children must stay ≤ 13
+const MAX_GUESTS = 13;
+const totalGuests = computed(() => guestStore.peopleCount + guestStore.childrenCount);
+const isAtCapacity = computed(() => totalGuests.value >= MAX_GUESTS);
+
 // Counter actions
-const incGuests = () => { if (guestStore.peopleCount < 13) guestStore.peopleCount++; };
+const incGuests = () => { if (!isAtCapacity.value && guestStore.peopleCount < MAX_GUESTS) guestStore.peopleCount++; };
 const decGuests = () => { if (guestStore.peopleCount > 1) guestStore.peopleCount--; };
-const incChildren = () => { if (guestStore.childrenCount < 10) guestStore.childrenCount++; };
+const incChildren = () => { if (!isAtCapacity.value) guestStore.childrenCount++; };
 const decChildren = () => { if (guestStore.childrenCount > 0) guestStore.childrenCount--; };
 
 // Submit wrapper. Skip the loading flag when client-side validation will fail
@@ -131,7 +136,7 @@ onUnmounted(() => {
                     :disabled="guestStore.peopleCount <= 1" aria-label="Mniej dorosłych">−</button>
                   <span class="counter__value">{{ guestStore.peopleCount }}</span>
                   <button type="button" class="counter__btn" @click="incGuests"
-                    :disabled="guestStore.peopleCount >= 13" aria-label="Więcej dorosłych">+</button>
+                    :disabled="isAtCapacity" aria-label="Więcej dorosłych">+</button>
                 </div>
               </div>
 
@@ -142,10 +147,19 @@ onUnmounted(() => {
                     :disabled="guestStore.childrenCount <= 0" aria-label="Mniej dzieci">−</button>
                   <span class="counter__value">{{ guestStore.childrenCount }}</span>
                   <button type="button" class="counter__btn" @click="incChildren"
-                    :disabled="guestStore.childrenCount >= 10" aria-label="Więcej dzieci">+</button>
+                    :disabled="isAtCapacity" aria-label="Więcej dzieci">+</button>
                 </div>
               </div>
             </div>
+
+            <p v-if="isAtCapacity" class="capacity-hint">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+              </svg>
+              Maksymalna liczba gości to {{ MAX_GUESTS }}.
+            </p>
 
             <label class="pets-toggle" :class="{ 'is-on': guestStore.hasPets }">
               <input type="checkbox" class="pets-toggle__input" v-model="guestStore.hasPets" />
@@ -596,6 +610,23 @@ onUnmounted(() => {
   font-size: var(--size-lg);
   font-weight: 600;
   color: var(--clr-slate800);
+}
+
+/* Capacity hint */
+.capacity-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--clr-warm-beige-800);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  margin: 0;
+}
+
+.capacity-hint svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 /* Pets checkbox */
