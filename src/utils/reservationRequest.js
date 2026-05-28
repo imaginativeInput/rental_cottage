@@ -36,13 +36,16 @@ export const sendReservationRequest = async (emailID, phoneID, messageID) => {
     alert('Nieprawidłowy numer telefonu.')
   }
 
+  const guestStore = useGuestStore()
   const payload = {
     email,
     phone,
     message,
     startDate: dateRange.value.start.toISOString().split('T')[0],
     endDate: dateRange.value.end.toISOString().split('T')[0],
-    people: useGuestStore().peopleCount,
+    people: guestStore.peopleCount,
+    children: guestStore.childrenCount,
+    pets: guestStore.hasPets,
   }
 
   try {

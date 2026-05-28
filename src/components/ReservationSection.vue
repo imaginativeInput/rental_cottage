@@ -28,7 +28,8 @@ const maxChars = 500;
 const { t } = useI18n();
 
 // Polish plural helpers
-const numberOfPeople = (n) => (n === 1 ? 'osoba' : n < 5 ? 'osoby' : 'osób');
+const adultsLabel = (n) => (n === 1 ? 'dorosły' : 'dorosłych');
+const childrenLabel = (n) => (n === 1 ? 'dziecko' : 'dzieci');
 
 const nightsCount = computed(() => {
   const { start, end } = dateRange.value || {};
@@ -46,6 +47,8 @@ const hasValidRange = computed(() => nightsCount.value > 0);
 // Counter actions
 const incGuests = () => { if (guestStore.peopleCount < 13) guestStore.peopleCount++; };
 const decGuests = () => { if (guestStore.peopleCount > 1) guestStore.peopleCount--; };
+const incChildren = () => { if (guestStore.childrenCount < 10) guestStore.childrenCount++; };
+const decChildren = () => { if (guestStore.childrenCount > 0) guestStore.childrenCount--; };
 
 // Submit wrapper. Skip the loading flag when client-side validation will fail
 // so the spinner only shows for actual network round-trips.
@@ -120,17 +123,52 @@ onUnmounted(() => {
 
           <div class="reservation__fields">
 
-            <div class="field">
-              <span class="field__label" id="people-label">Liczba osób</span>
-              <div class="counter" role="group" aria-labelledby="people-label">
-                <button type="button" class="counter__btn" @click="decGuests"
-                  :disabled="guestStore.peopleCount <= 1" aria-label="Mniej osób">−</button>
-                <span class="counter__value">{{ guestStore.peopleCount }}</span>
-                <button type="button" class="counter__btn" @click="incGuests"
-                  :disabled="guestStore.peopleCount >= 13" aria-label="Więcej osób">+</button>
-                <span class="counter__hint">{{ numberOfPeople(guestStore.peopleCount) }}</span>
+            <div class="field-row">
+              <div class="field">
+                <span class="field__label" id="adults-label">Dorośli</span>
+                <div class="counter" role="group" aria-labelledby="adults-label">
+                  <button type="button" class="counter__btn" @click="decGuests"
+                    :disabled="guestStore.peopleCount <= 1" aria-label="Mniej dorosłych">−</button>
+                  <span class="counter__value">{{ guestStore.peopleCount }}</span>
+                  <button type="button" class="counter__btn" @click="incGuests"
+                    :disabled="guestStore.peopleCount >= 13" aria-label="Więcej dorosłych">+</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <span class="field__label" id="children-label">Dzieci</span>
+                <div class="counter" role="group" aria-labelledby="children-label">
+                  <button type="button" class="counter__btn" @click="decChildren"
+                    :disabled="guestStore.childrenCount <= 0" aria-label="Mniej dzieci">−</button>
+                  <span class="counter__value">{{ guestStore.childrenCount }}</span>
+                  <button type="button" class="counter__btn" @click="incChildren"
+                    :disabled="guestStore.childrenCount >= 10" aria-label="Więcej dzieci">+</button>
+                </div>
               </div>
             </div>
+
+            <label class="pets-toggle" :class="{ 'is-on': guestStore.hasPets }">
+              <input type="checkbox" class="pets-toggle__input" v-model="guestStore.hasPets" />
+              <span class="pets-toggle__box" aria-hidden="true">
+                <svg v-if="guestStore.hasPets" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                  stroke-width="3" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+              </span>
+              <span class="pets-toggle__text">
+                <span class="pets-toggle__title">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <ellipse cx="6.5" cy="11" rx="1.8" ry="2.4" />
+                    <ellipse cx="9.5" cy="6.5" rx="1.6" ry="2.1" />
+                    <ellipse cx="14.5" cy="6.5" rx="1.6" ry="2.1" />
+                    <ellipse cx="17.5" cy="11" rx="1.8" ry="2.4" />
+                    <path d="M12 11c-2.8 0-5 2.5-5 5 0 2 1.5 3 3 3 1 0 1.5-0.5 2-0.5s1 0.5 2 0.5c1.5 0 3-1 3-3 0-2.5-2.2-5-5-5z" />
+                  </svg>
+                  Zwierzęta
+                </span>
+                <span class="pets-toggle__hint">Zabieram ze sobą zwierzaka</span>
+              </span>
+            </label>
 
             <div class="field">
               <label class="field__label" for="email">
@@ -226,8 +264,27 @@ onUnmounted(() => {
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                 </svg>
-                <strong>{{ guestStore.peopleCount }}</strong> {{ numberOfPeople(guestStore.peopleCount) }}
+                <strong>{{ guestStore.peopleCount }}</strong> {{ adultsLabel(guestStore.peopleCount) }}
               </span>
+              <template v-if="guestStore.childrenCount > 0">
+                <span class="summary__sep" aria-hidden="true">•</span>
+                <span class="summary__item">
+                  <strong>{{ guestStore.childrenCount }}</strong> {{ childrenLabel(guestStore.childrenCount) }}
+                </span>
+              </template>
+              <template v-if="guestStore.hasPets">
+                <span class="summary__sep" aria-hidden="true">•</span>
+                <span class="summary__item summary__item--pets" aria-label="Ze zwierzakiem">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <ellipse cx="6.5" cy="11" rx="1.8" ry="2.4" />
+                    <ellipse cx="9.5" cy="6.5" rx="1.6" ry="2.1" />
+                    <ellipse cx="14.5" cy="6.5" rx="1.6" ry="2.1" />
+                    <ellipse cx="17.5" cy="11" rx="1.8" ry="2.4" />
+                    <path d="M12 11c-2.8 0-5 2.5-5 5 0 2 1.5 3 3 3 1 0 1.5-0.5 2-0.5s1 0.5 2 0.5c1.5 0 3-1 3-3 0-2.5-2.2-5-5-5z" />
+                  </svg>
+                  Zwierzak
+                </span>
+              </template>
             </div>
 
             <button class="submit-btn" type="submit" :disabled="isSubmitting">
@@ -352,6 +409,18 @@ onUnmounted(() => {
   gap: 0.5rem;
 }
 
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .field-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .field__label {
   text-transform: uppercase;
   font-size: var(--size-xs);
@@ -474,14 +543,14 @@ onUnmounted(() => {
 
 /* Guest counter */
 .counter {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
   background: #fff;
   border: 1px solid var(--clr-slate200);
   border-radius: 0.625rem;
-  padding: 0.4rem 0.5rem 0.4rem 0.4rem;
-  width: fit-content;
+  padding: 0.4rem;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -521,6 +590,7 @@ onUnmounted(() => {
 }
 
 .counter__value {
+  flex: 1;
   min-width: 2rem;
   text-align: center;
   font-size: var(--size-lg);
@@ -528,11 +598,94 @@ onUnmounted(() => {
   color: var(--clr-slate800);
 }
 
-.counter__hint {
-  font-size: var(--size-sm);
+/* Pets checkbox */
+.pets-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #fff;
+  border: 1px solid var(--clr-slate200);
+  border-radius: 0.625rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.pets-toggle:hover {
+  border-color: var(--clr-slate400);
+}
+
+.pets-toggle.is-on {
+  border-color: var(--clr-warm-beige-600);
+  background: rgba(193, 151, 112, 0.06);
+}
+
+.pets-toggle__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pets-toggle__input:focus-visible + .pets-toggle__box {
+  box-shadow: 0 0 0 4px rgba(193, 151, 112, 0.25);
+}
+
+.pets-toggle__box {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 0.4rem;
+  border: 1.5px solid var(--clr-slate400);
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-light);
+  transition: background-color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.pets-toggle__box svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.pets-toggle.is-on .pets-toggle__box {
+  background: var(--clr-warm-beige-600);
+  border-color: var(--clr-warm-beige-600);
+}
+
+.pets-toggle__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.pets-toggle__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--clr-slate800);
+  font-weight: 600;
+  font-size: var(--size-base);
+}
+
+.pets-toggle__title svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--clr-warm-beige-600);
+}
+
+.pets-toggle__hint {
   color: var(--clr-slate400);
-  margin-left: 0.25rem;
-  padding-right: 0.5rem;
+  font-size: var(--size-xs);
 }
 
 /* Summary chip */

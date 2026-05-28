@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 
 export const useGuestStore = defineStore('guest', () => {
   const peopleCount = ref(2)
+  const childrenCount = ref(0)
+  const hasPets = ref(false)
 
   const setPeopleCount = (value) => {
     peopleCount.value = value
@@ -10,6 +12,8 @@ export const useGuestStore = defineStore('guest', () => {
 
   return {
     peopleCount,
+    childrenCount,
+    hasPets,
     setPeopleCount,
   }
 })
