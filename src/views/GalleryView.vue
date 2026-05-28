@@ -394,7 +394,7 @@ const vIntersect = {
   grid-template-columns: 400px;
   grid-template-rows: 300px;
   background-color: var(--clr-light);
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 
 #close {
@@ -454,6 +454,7 @@ const vIntersect = {
   .gallery__img-grid {
     grid-template-columns: 300px 300px 300px;
     grid-template-rows: 225px 225px 225px 225px 225px;
+    margin-bottom: 5rem;
   }
 
   .img-0 {
