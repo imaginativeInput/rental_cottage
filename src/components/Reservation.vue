@@ -23,6 +23,14 @@ const endDateNumber = ref(null);
 
 const guestStore = useGuestStore();
 const guestLimit = 13;
+
+const selectGuests = (n) => {
+  guestStore.peopleCount = n;
+  if (n + guestStore.childrenCount > guestLimit) {
+    guestStore.childrenCount = 0;
+  }
+  isDropdown.value = false;
+};
 const numberOfPeople = (n) => {
   if (n < 5 && n != 1) {
     return 'osoby';
@@ -183,8 +191,8 @@ onUnmounted(() => {
         <div id="guest-dropdown-menu" class="dropdown-content" v-show="isDropdown">
           <ul class="guest-ul">
             <li v-for="n in guestLimit" :key="n"
-              :class="{ 'guest-li': true, 'active': guestStore.peopleCount === n, 'guest-li--disabled': n + guestStore.childrenCount > guestLimit }"
-              @click="n + guestStore.childrenCount > guestLimit ? null : (guestStore.peopleCount = n, isDropdown = false)">
+              :class="{ 'guest-li': true, 'active': guestStore.peopleCount === n }"
+              @click="selectGuests(n)">
               {{ n }}
             </li>
           </ul>
@@ -315,14 +323,6 @@ li {
   cursor: pointer;
   background-color: var(--clr-slate200);
   background-color: var(--clr-warm-beige-200);
-}
-
-.guest-li--disabled,
-.guest-li--disabled:hover {
-  color: var(--clr-slate400);
-  background-color: var(--clr-light);
-  cursor: not-allowed;
-  text-decoration: line-through;
 }
 
 .guest-li-none {
