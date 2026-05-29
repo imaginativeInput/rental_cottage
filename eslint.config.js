@@ -23,6 +23,26 @@ export default [
     },
   },
 
+  {
+    name: 'app/test-files',
+    files: ['tests/**/*.{js,mjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+        alert: 'readonly',
+        fetch: 'readonly',
+      },
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   ...oxlint.configs['flat/recommended'],
