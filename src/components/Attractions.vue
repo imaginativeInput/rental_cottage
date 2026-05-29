@@ -1,12 +1,5 @@
 <script setup>
-import termyBukovinaImg from '@/assets/attractions/termy-bukovina.jpg';
-import termaBaniaImg from '@/assets/attractions/terma-bania.jpg';
-import kotelnicaImg from '@/assets/attractions/kotelnica.jpg';
-import morskieOkoImg from '@/assets/attractions/morskie-oko.jpg';
-import bachledkaImg from '@/assets/attractions/bachledka.jpg';
-import dunajecImg from '@/assets/attractions/dunajec.jpg';
-import jurgowKosciolImg from '@/assets/attractions/jurgow-kosciol.jpg';
-import zakopaneImg from '@/assets/attractions/zakopane.jpg';
+import PictureImg from '@/components/PictureImg.vue';
 
 const attractions = [
   {
@@ -15,7 +8,7 @@ const attractions = [
     distance: '3 km',
     tag: 'Termy',
     description: 'Kompleks 20+ basenów mineralnych, saun i strefa wellness z panoramicznym widokiem na Tatry.',
-    image: termyBukovinaImg,
+    name: 'termy-bukovina',
     url: 'https://www.termybukovina.pl/',
   },
   {
@@ -24,7 +17,7 @@ const attractions = [
     distance: '8 km',
     tag: 'Termy',
     description: 'Baseny zewnętrzne z panoramą Tatr, strefa SPA i wellness w Białce Tatrzańskiej.',
-    image: termaBaniaImg,
+    name: 'terma-bania',
     url: 'https://www.termabania.pl/',
   },
   {
@@ -33,7 +26,7 @@ const attractions = [
     distance: '10 km',
     tag: 'Narty',
     description: 'Największa stacja narciarska w okolicy. Trasy dla każdego poziomu, snowpark, wypożyczalnia.',
-    image: kotelnicaImg,
+    name: 'kotelnica',
     url: 'https://bialkatatrzanska.pl/',
   },
   {
@@ -42,7 +35,7 @@ const attractions = [
     distance: 'od 15 km',
     tag: 'Szlaki',
     description: 'Morskie Oko, Dolina Kościeliska, Giewont — najpiękniejsze szlaki w zasięgu jednodniowej wycieczki.',
-    image: morskieOkoImg,
+    name: 'morskie-oko',
     url: 'https://tpn.pl/',
   },
   {
@@ -51,7 +44,7 @@ const attractions = [
     distance: '25 km',
     tag: 'Słowacja',
     description: 'Słowacka ścieżka w koronach drzew, 600 m kładki i 32-metrowa wieża widokowa.',
-    image: bachledkaImg,
+    name: 'bachledka',
     url: 'https://chodnikkorunamistromov.sk/',
   },
   {
@@ -60,7 +53,7 @@ const attractions = [
     distance: '30 km',
     tag: 'Pieniny',
     description: 'Tradycyjne tratwy flisackie przez malowniczy Przełom Dunajca między Polską a Słowacją.',
-    image: dunajecImg,
+    name: 'dunajec',
     url: 'https://flisacy.pl/',
   },
   {
@@ -69,7 +62,7 @@ const attractions = [
     distance: '3 km',
     tag: 'Kultura',
     description: 'Zabytkowy modrzewiowy kościół z XVII wieku — perła góralskiej architektury sakralnej.',
-    image: jurgowKosciolImg,
+    name: 'jurgow-kosciol',
   },
   {
     icon: 'town',
@@ -77,7 +70,7 @@ const attractions = [
     distance: '25 km',
     tag: 'Miasto',
     description: 'Stolica polskich Tatr. Krupówki, kolejka na Gubałówkę, restauracje i sklepy z regionalnymi wyrobami.',
-    image: zakopaneImg,
+    name: 'zakopane',
   },
 ];
 </script>
@@ -98,7 +91,13 @@ const attractions = [
       <div class="attractions__grid">
         <article v-for="(item, i) in attractions" :key="i" class="attraction-card">
           <div class="attraction-card__media">
-            <img :src="item.image" :alt="item.title" class="attraction-card__image" loading="lazy" />
+            <PictureImg
+              :name="item.name"
+              :alt="item.title"
+              format="jpeg"
+              :widths="[480, 960]"
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              img-class="attraction-card__image" />
             <span class="attraction-card__distance">{{ item.distance }}</span>
           </div>
 
@@ -256,6 +255,12 @@ const attractions = [
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--clr-warm-beige-200);
+}
+
+.attraction-card__media > picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .attraction-card__image {

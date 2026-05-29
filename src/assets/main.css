@@ -1,3 +1,5 @@
+@import './fonts.css';
+
 :root {
   --clr-dark: #070a13;
   --clr-dark-blue: #052f4a;
@@ -45,8 +47,11 @@
   --size-10xl: 10rem;
 }
 
-* {
+*,
+*::before,
+*::after {
   margin: 0;
+  box-sizing: border-box;
   line-height: calc(1em + 0.5rem);
 }
 

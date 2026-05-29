@@ -15,4 +15,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    // Keep small variants out of JS bundles so they cache as separate files.
+    assetsInlineLimit: 0,
+  },
 })

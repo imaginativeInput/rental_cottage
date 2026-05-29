@@ -1,48 +1,28 @@
 <script setup>
+import { defineAsyncComponent } from 'vue';
 import Header from '../components/Header.vue';
 import Welcome from '../components/Welcome.vue';
 import Reservation from '@/components/Reservation.vue';
 import About from '../components/About.vue';
 import Gallery from '../components/Gallery.vue';
-import ReservationForm from '../components/ReservationForm.vue';
-import ReservationSection from '@/components/ReservationSection.vue';
 
-
-import Attractions from '@/components/Attractions.vue';
-import Contact from '../components/Contact.vue';
+const Attractions = defineAsyncComponent(() => import('@/components/Attractions.vue'));
+const ReservationSection = defineAsyncComponent(() => import('@/components/ReservationSection.vue'));
 </script>
 
 
 <template>
-  <!doctype html>
-  <html lang="en">
-
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Domek Rzepiska</title>
-  </head>
-
-  <body>
-    <div class="hero__bg"></div>
-    <Header />
-
-    <div id="app">
-      <main>
-        <Welcome />
-        <Reservation />
-        <About />
-        <Gallery />
-        <Attractions />
-        <ReservationSection />
-        <!-- <Contact /> -->
-      </main>
-    </div>
-  </body>
-
-  </html>
+  <div class="hero__bg"></div>
+  <Header />
+  <main>
+    <Welcome />
+    <Reservation />
+    <About />
+    <Gallery />
+    <Attractions />
+    <ReservationSection />
+    <!-- <Contact /> -->
+  </main>
 </template>
 
 
@@ -53,9 +33,15 @@ import Contact from '../components/Contact.vue';
   left: 0;
   width: 100%;
   height: 120vh;
-  background: url('../assets/NZF_4359.avif') no-repeat center/cover;
+  background: url('../assets/NZF_4359-960.avif') no-repeat center/cover;
   z-index: -1;
   filter: brightness(50%);
+}
+
+@media (min-width: 1440px) {
+  .hero__bg {
+    background-image: url('../assets/NZF_4359-1440.avif');
+  }
 }
 
 .calendar-container {

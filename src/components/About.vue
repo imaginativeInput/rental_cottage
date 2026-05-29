@@ -1,6 +1,5 @@
 <script setup>
-import TatraMountainsGreen from '@/assets/gallery/NZF_4375.avif';
-import tatraMountainsClean from '@/assets/gallery/NZF_4359.avif';
+import PictureImg from '@/components/PictureImg.vue';
 </script>
 
 <template>
@@ -19,8 +18,18 @@ import tatraMountainsClean from '@/assets/gallery/NZF_4359.avif';
     <br class="img-separator">
     <!-- <br> -->
     <div class="o-nas__img-wrapper gallery">
-      <img class="o-nas__img" :src="tatraMountainsClean" alt="Tatra Mountains panorama view from balcony">
-      <img class="o-nas__img" :src="TatraMountainsGreen" alt="Tatra Mountains panorama view green grass and coffee">
+      <PictureImg name="NZF_4359"
+        alt="Tatra Mountains panorama view from balcony"
+        img-class="o-nas__img"
+        sizes="(min-width: 1024px) 60vw, 94vw"
+        :widths="[480, 960, 1440]"
+        loading="eager" />
+      <PictureImg name="NZF_4375"
+        alt="Tatra Mountains panorama view green grass and coffee"
+        img-class="o-nas__img"
+        sizes="(min-width: 1024px) 60vw, 94vw"
+        :widths="[480, 960, 1440]"
+        loading="eager" />
     </div>
 
   </section>
@@ -38,7 +47,7 @@ import tatraMountainsClean from '@/assets/gallery/NZF_4359.avif';
   /* to avoid visual glitchs */
 }
 
-.gallery>img {
+.gallery>picture {
   --_p: calc(-1*var(--g));
   grid-area: 1/1;
   aspect-ratio: 16 / 10;
@@ -46,33 +55,27 @@ import tatraMountainsClean from '@/assets/gallery/NZF_4359.avif';
   transition: .4s .1s;
 }
 
-.gallery>img:first-child {
+.gallery>picture>img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery>picture:first-child {
   clip-path: polygon(0 0, calc(100% + var(--_p)) 0, 0 calc(100% + var(--_p)));
 }
 
-.gallery>img:last-child {
+.gallery>picture:last-child {
   clip-path: polygon(100% 100%, 100% calc(0% - var(--_p)), calc(0% - var(--_p)) 100%);
 }
 
-
-/* TESTING */
-.gallery>img:first-child {
-  clip-path: polygon(0 0, calc(100% + var(--_p)) 0, 0 calc(100% + var(--_p)));
-}
-
-.gallery>img:last-child {
-  clip-path: polygon(100% 100%, 100% calc(0% - var(--_p)), calc(0% - var(--_p)) 100%);
-}
-
-/* TESTING END */
-
-.gallery:hover>img:last-child,
-.gallery:hover>img:first-child:hover {
+.gallery:hover>picture:last-child,
+.gallery:hover>picture:first-child:hover {
   --_p: calc(50% - var(--g));
 }
 
-.gallery:hover>img:first-child,
-.gallery:hover>img:first-child:hover+img {
+.gallery:hover>picture:first-child,
+.gallery:hover>picture:first-child:hover+picture {
   --_p: calc(-50% - var(--g));
 }
 

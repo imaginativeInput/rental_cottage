@@ -3,7 +3,11 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 import Header from '@/components/Header.vue';
 
-const fullImgs = import.meta.glob('@/assets/gallery/*.avif', { eager: true, import: 'default' });
+// Original avif files only — exclude generated variants like *-480.avif.
+const allAvifs = import.meta.glob('@/assets/gallery/*.avif', { eager: true, import: 'default' });
+const fullImgs = Object.fromEntries(
+  Object.entries(allAvifs).filter(([k]) => !/-\d+\.avif$/.test(k))
+);
 const smallImgs = import.meta.glob('@/assets/gallery/*_small.{jpg,png}', { eager: true, import: 'default' });
 
 const imgOrder = [
