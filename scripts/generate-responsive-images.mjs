@@ -30,6 +30,17 @@ const SOURCES = [
   { dir: 'src/assets', outDir: 'public/hero', names: ['NZF_4359'], widths: [480, 960, 1440], format: 'avif', quality: 55 },
   { dir: 'src/assets/gallery', names: ['NZF_4375'], widths: [480, 960, 1440], format: 'avif', quality: 55 },
 
+  // /galeria grid tiles. The grid renders small cells (≤ ~475 px wide, 3-column
+  // on desktop) but historically loaded the full-res ~1920 px originals into
+  // them. Emit responsive variants so the grid serves an appropriately-sized
+  // image; the lightbox still uses the full original (light) → /gallery-hd swap.
+  // NZF_4359 + the 5 home-slider names above already get variants; these are
+  // the remaining grid-only names.
+  { dir: 'src/assets/gallery', names: [
+    'Mobile-livingroom03', 'Mobile-kitchen02', 'Mobile-livingroom-balcony01',
+    'livingroom02', 'NZF_4358', 'NZF_4513', 'Mobile-balcony-livingroom01',
+  ], widths: [480, 960, 1440], format: 'avif', quality: 50 },
+
   // About section — same NZF_4375 + NZF_4359 reused.
   // (Already covered above.)
 

@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 import Header from '@/components/Header.vue';
+import { srcsetFor } from '@/utils/responsiveImages';
 
 // Original avif files only — exclude generated variants like *-480.avif.
 const allAvifs = import.meta.glob('@/assets/gallery/*.avif', { eager: true, import: 'default' });
@@ -62,13 +63,15 @@ const processedImgs = computed(() => {
     const originalUrl = fullKey ? fullImgs[fullKey] : null;
     const smallUrl = smallKey ? smallImgs[smallKey] : null;
 
-    if (!smallUrl) {
-      console.warn(`[BUILD_DEBUG] No small image found for: ${name}`);
-    }
+    // Responsive variants for the grid tile (small cells don't need the full
+    // ~1920px original). Falls back to `original` via the <img> src if a name
+    // has no generated variants yet.
+    const srcset = srcsetFor(name, { widths: [480, 960, 1440] }).srcset;
 
     return {
       original: originalUrl,
       bgUrl: smallUrl,
+      srcset,
       name: name,
       index: index,
     };
@@ -197,7 +200,8 @@ const vIntersect = {
           :id="`img-${index}`" @click="showImage(img.original, index)" :style="{
             backgroundImage: `url(${img.bgUrl})`
           }" v-intersect>
-          <img :src="img.original" :alt="img.name" :style="elementStyle" loading="lazy">
+          <img :src="img.original" :srcset="img.srcset"
+            sizes="(min-width: 1024px) 50vw, 100vw" :alt="img.name" :style="elementStyle" loading="lazy">
         </div>
       </div>
 

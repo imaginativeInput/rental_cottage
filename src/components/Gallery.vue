@@ -75,7 +75,6 @@ onMounted(() => {
             :widths="[480, 960, 1440]"
             sizes="100vw"
             loading="eager"
-            fetchpriority="high"
             img-class="slide-image" />
         </div>
 

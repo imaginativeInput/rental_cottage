@@ -7,6 +7,11 @@
   <link rel="icon" href="/house-icon-02-transparent-balanced.png">
   <link rel="canonical" href="https://domekrzepiska.pl/">
 
+  <!-- The reservation form POSTs here on submit; resolve DNS early so the first
+       request doesn't pay the lookup. dns-prefetch (not preconnect) avoids
+       holding an idle socket for a connection used only deep in the funnel. -->
+  <link rel="dns-prefetch" href="https://rental-cottage-api-git-main-imaginativeinputs-projects.vercel.app">
+
   <title>Domek Rzepiska — Wynajem domku z widokiem na Tatry | Rzepiska, Jurgów</title>
   <meta name="description"
     content="Domek z panoramą Tatr w Rzepiskach koło Jurgowa. 127 m², 10–13 osób, parking, WiFi. 3 km od Term Bukovina, 10 km od Białki Tatrzańskiej.">

@@ -1,10 +1,19 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useScreens } from 'vue-screen-utils';
 
 import { useGuestStore } from '@/stores/guestStore';
-import { dateRange, sendReservationRequest } from '@/utils/reservationRequest';
+import { dateRange } from '@/utils/reservationRequest';
+
+// v-calendar + its deps (@popperjs, date-fns) are ~47 KB gzip. The picker only
+// renders behind the calendarStore.isCalendarVisible toggle, so load it lazily
+// (incl. its CSS) the first time it's opened instead of in the eager entry chunk.
+const VDatePicker = defineAsyncComponent(async () => {
+  await import('v-calendar/style.css');
+  const m = await import('v-calendar');
+  return m.DatePicker;
+});
 
 const months = ['Styczeń', 'Luty', 'Marzec',
   'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec',
@@ -40,17 +49,7 @@ const numberOfPeople = (n) => {
     return 'osoba';
   }
 }
-// SOMETHING TO GET RID OF
 const isDropdown = ref(false);
-const changeNumberOfGuests = (id) => {
-  const element = document.getElementById(`${id}`);
-  isDropdown.value = false
-  peopleCount.value = element.innerHTML
-  console.log(`PEOPLE COUNT VALUE: ${peopleCount.value}`);
-}
-
-// SOMETHING TO GET RID OF
-const isCalendarOpen = ref(false);
 
 const calendarStore = useCalendarStore();
 const { mapCurrent } = useScreens({

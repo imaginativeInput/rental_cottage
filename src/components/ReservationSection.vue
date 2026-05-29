@@ -1,10 +1,19 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, defineAsyncComponent } from "vue";
 import { useScreens } from 'vue-screen-utils';
 
 import { useI18n } from 'vue-i18n';
 import { useGuestStore } from '@/stores/guestStore';
 import { dateRange, sendReservationRequest } from '@/utils/reservationRequest';
+
+// Lazily load v-calendar (+ its CSS) so its ~47 KB gzip stays out of the eager
+// entry chunk; this section is already an async component, and the picker only
+// renders once the user reaches it.
+const VDatePicker = defineAsyncComponent(async () => {
+  await import('v-calendar/style.css');
+  const m = await import('v-calendar');
+  return m.DatePicker;
+});
 
 // Regex patterns
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
