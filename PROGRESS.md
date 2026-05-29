@@ -2,6 +2,16 @@
 
 Session summary of work landed on `main`. Newest commits at the top of each group.
 
+## Tech-debt cleanup
+
+Cleared three items off the tech-debt list before they could bite; no visual or behavioural change.
+
+- **Removed `test.vue`** — an abandoned 178-line reservation-form draft at the repo root with no references.
+- **Scoped `Contact.vue` styles** — its `<style>` was global, leaking `.attractions` / `.attractions__title` where they collided with the real `Attractions` section. Added `scoped`. (Contact stays commented out in `HomeView`, so this is preventive.)
+- **Re-encoded gallery sources to real AVIF** — `file` revealed the mislabel was far wider than the original "3 files" note: *every* `src/assets/gallery/*.avif` source (plus the root `NZF_4359.avif`) was JPEG content carrying an `.avif` extension — 49 files. Re-encoded in place (sharp, q55) and regenerated the `-480/-960/-1440` variants via `images:gen`; ~14.8 MB → 7.5 MB. Delivery was already real AVIF (the variants), so this was cleanliness only. Build + 64 tests green; no JPEG-content `.avif` remain.
+
+The `public/gallery-hd/` ~67 MB CDN move is left as the documented next follow-up in `TODO.md` (needs an external bucket + credentials).
+
 ## SEO + performance (web.dev driven)
 
 A round of fixes targeting the web.dev report (Performance 68, SEO 75). Buckets land independently; nothing here changes the visual design.
