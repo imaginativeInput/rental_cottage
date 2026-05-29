@@ -7,6 +7,7 @@ import { nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MobileHeader from './MobileHeader.vue';
+import LanguagePicker from './LanguagePicker.vue';
 
 
 const props = defineProps({
@@ -117,6 +118,16 @@ const routeAndScroll = (url, section) => {
   });
 }
 
+const handleAboutClick = (event) => {
+  if (isHomePage.value) {
+    event.preventDefault();
+    scrollToSection('o-nas');
+  } else {
+    event.preventDefault();
+    routeAndScroll('/', 'o-nas');
+  }
+};
+
 const reservationButtonClass = computed(() => {
   // const baseClass = scrolled.value || !props.isLightTheme ? 'btn header__btn' : 'header__btn-scrolled';
   // return [baseClass, linkThemeClass.value]
@@ -160,7 +171,7 @@ const reservationButtonClass = computed(() => {
 
       <ul class="header__menu">
         <li>
-          <a @click="isHomePage ? scrollToSection('o-nas') : routeAndScroll('/', 'o-nas')" class="header__link"
+          <a :href="isHomePage ? '#o-nas' : '/#o-nas'" @click="handleAboutClick" class="header__link"
             :class="linkThemeClass">{{ t('about') }}</a>
         </li>
         <li>
@@ -172,6 +183,9 @@ const reservationButtonClass = computed(() => {
           }}</a>
         </li>
         <li class="header__line"></li>
+        <li>
+          <LanguagePicker :class="linkThemeClass" />
+        </li>
         <li>
           <button id="reservationButton" :class="reservationButtonClass" style="text-transform: uppercase;"
             @click="handleResevationClick">

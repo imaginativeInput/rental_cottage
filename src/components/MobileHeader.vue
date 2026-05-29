@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePageStore } from '@/stores/isHomeStore';
 import router from '@/router';
+import LanguagePicker from './LanguagePicker.vue';
 
 
 const props = defineProps({
@@ -113,6 +114,9 @@ const handleResevationClick = () => {
       </li>
       <li>
         <a href="#kontakt" @click="emit('close')">{{ t('contact') }}</a>
+      </li>
+      <li class="mobile-nav__lang">
+        <LanguagePicker />
       </li>
     </ul>
   </div>
