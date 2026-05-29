@@ -70,7 +70,7 @@
   </section>
 </template>
 
-<style>
+<style scoped>
 .contact {
   padding-top: 4rem;
   padding-bottom: 4rem;
