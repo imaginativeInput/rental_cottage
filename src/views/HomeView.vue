@@ -12,7 +12,16 @@ const ReservationSection = defineAsyncComponent(() => import('@/components/Reser
 
 
 <template>
-  <div class="hero__bg"></div>
+  <img
+    class="hero__bg"
+    src="/hero/NZF_4359-960.avif"
+    srcset="/hero/NZF_4359-480.avif 480w, /hero/NZF_4359-960.avif 960w, /hero/NZF_4359-1440.avif 1440w"
+    sizes="100vw"
+    alt="Domek Rzepiska na tle panoramy Tatr"
+    fetchpriority="high"
+    loading="eager"
+    decoding="async"
+  />
   <Header />
   <main>
     <Welcome />
@@ -33,16 +42,13 @@ const ReservationSection = defineAsyncComponent(() => import('@/components/Reser
   left: 0;
   width: 100%;
   height: 120vh;
-  background: url('../assets/NZF_4359-960.avif') no-repeat center/cover;
+  object-fit: cover;
+  object-position: center;
   z-index: -1;
   filter: brightness(50%);
 }
 
-@media (min-width: 1440px) {
-  .hero__bg {
-    background-image: url('../assets/NZF_4359-1440.avif');
-  }
-}
+/* Responsive hero variants are handled by the <img> srcset. */
 
 .calendar-container {
   position: fixed;

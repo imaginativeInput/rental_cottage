@@ -23,7 +23,11 @@ const SOURCES = [
   { dir: 'src/assets/gallery', names: [
     'fireplace02', 'livingroom05-best', 'bedroom01', 'outside01', 'NZF_4473',
   ], widths: [480, 960, 1440], format: 'avif', quality: 50 },
+  // NZF_4359 (Tatra panorama): used by the About section + home slider (bundled via the glob)
+  // AND as the LCP hero. About/slider read the src/assets variants; the hero is preloaded from a
+  // stable /hero/ path, so a second copy is emitted to public/hero.
   { dir: 'src/assets', names: ['NZF_4359'], widths: [480, 960, 1440], format: 'avif', quality: 55 },
+  { dir: 'src/assets', outDir: 'public/hero', names: ['NZF_4359'], widths: [480, 960, 1440], format: 'avif', quality: 55 },
   { dir: 'src/assets/gallery', names: ['NZF_4375'], widths: [480, 960, 1440], format: 'avif', quality: 55 },
 
   // About section — same NZF_4375 + NZF_4359 reused.
@@ -70,12 +74,13 @@ for (const block of SOURCES) {
     }
     for (const w of block.widths) {
       const outName = `${name}-${w}${EXT[block.format]}`;
-      const out = path.join(repoRoot, block.dir, outName);
+      const out = path.join(repoRoot, block.outDir || block.dir, outName);
       if (await fileExists(out) && !(await isNewer(src, out))) {
         skipped++;
         continue;
       }
       try {
+        await fs.mkdir(path.dirname(out), { recursive: true });
         await encode(
           sharp(src).resize({ width: w, withoutEnlargement: true }),
           block.format, block.quality, block.progressive,

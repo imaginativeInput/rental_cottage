@@ -32,6 +32,11 @@
   <link rel="preload" as="font" type="font/woff2"
     href="/fonts/playfair-display-latin.woff2" crossorigin>
 
+  <!-- Preload the LCP hero image (stable /hero/ path so the hashed bundle isn't needed) -->
+  <link rel="preload" as="image" href="/hero/NZF_4359-960.avif"
+    imagesrcset="/hero/NZF_4359-480.avif 480w, /hero/NZF_4359-960.avif 960w, /hero/NZF_4359-1440.avif 1440w"
+    imagesizes="100vw" fetchpriority="high">
+
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
