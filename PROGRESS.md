@@ -2,6 +2,21 @@
 
 Session summary of work landed on `main`. Newest commits at the top of each group.
 
+## Hero — reveal the full panorama (all viewports)
+
+The hero only showed the dark upper sky + moon; the dark `About` (`.o-nas`) section, sitting right under the booking bar (~70vh desktop, ~62vh mobile), covered the lower half of the photo — so the mountains and foreground trees (the selling point) never appeared. The image crop was already correct (the moon sits at the same ~18% regardless); the fix is to let the hero fill the viewport so `About` starts at the bottom instead of mid-screen. Two levers, tuned per breakpoint:
+
+- `Welcome.vue` `.welcome` height: base `45vh → 58vh`, `@768px 50vh → 60vh`, `@1024px 55vh → 72vh` (title settles to ~23–24% from the top).
+- `Reservation.vue` `.rezerwacja { margin-bottom }`: base `22vh`, overridden to `18vh` `@1024px` — opens the gap under the booking bar and pushes `About` down to ~96–97vh, revealing the mountain ridge + trees beneath the bar.
+- No change to `.hero__bg` (kept `height: 120vh`, `object-position: center`; on portrait it cover-crops to a centre slice that still contains the ridge). Browser-verified with Playwright at 390×844 (mobile), 768×1024 (tablet), 1900×916 and 1920×1080 (desktop) — all fill the viewport and reveal the panorama; vh-based so it scales across aspect ratios. Build + 64 tests green (purely visual; no layout assertions).
+
+## Narrow-screen fixes — overflow + image fit
+
+Two related mobile bugs, both browser-diagnosed with Playwright (offender scan + computed styles) and re-verified at 375px / 1440px.
+
+- **Horizontal overflow / off-centre page.** The two `<picture>`s in the `About` diagonal-split `.gallery` rendered ~16px wider than the viewport (391 vs 375): a grid item's default `min-width: auto` let the picture grow to the image's intrinsic size and bleed past the viewport. `clip-path` hid it visually but the layout box still overflowed, so the page scrolled sideways (the existing `body { overflow-x: hidden }` doesn't reliably stop this on mobile). Fixed at the source — `.gallery { grid-template-columns: minmax(0, 1fr) }` + `.gallery > picture { min-width: 0; width: 100% }`. `documentElement.scrollWidth` now equals the viewport (no scroll); the desktop diagonal effect is unchanged (pictures stay equal-sized, clip-paths are %-based).
+- **Attraction images not scaling (most visible on Terma Bania).** `.attraction-card__image { object-fit: cover }` is **scoped** but the `<img>` is rendered by the child `PictureImg` component, so the rule never reached it — the image fell back to the global `img { max-width: 100% }` and rendered at its natural aspect (terma-bania ~4:3), spilling out of the 16:10 media box and clipping at the bottom. Fixed with `:deep()`: `.attraction-card__media :deep(.attraction-card__image) { width:100%; height:100%; object-fit:cover }` (+ the hover scale). All cards now cover-fill their 16:10 frame. (Same scoped-style-can't-reach-child-img pattern exists latently in About/Gallery image rules, but those render acceptably and were left untouched.)
+
 ## Performance round 2 — critical-path JS/CSS + gallery images
 
 A second perf pass driven by a multi-agent audit (6 dimensions, adversarially verified). Each change was build- + test- (64/64) + real-browser-verified (`vite preview` + Playwright on `/` and `/galeria`). Headline: the eager critical-path payload nearly halved.

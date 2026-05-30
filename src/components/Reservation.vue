@@ -229,6 +229,10 @@ li {
   text-transform: uppercase;
   color: var(--clr-dark);
   justify-content: center;
+  /* Gap below the booking bar before the dark About section, so the hero
+     fills the viewport and the panorama shows beneath the bar. Tuned per
+     breakpoint (desktop overrides this to 18vh below). */
+  margin-bottom: 22vh;
 }
 
 .rezerwacja__form {
@@ -346,6 +350,13 @@ li {
 }
 
 @media (min-width: 1024px) {
+  /* Push the dark About section down to the viewport bottom so the hero fills
+     the screen and the Tatra panorama (mountains + trees) is revealed below
+     the booking bar. Pairs with `.welcome { height: 72vh }` in Welcome.vue. */
+  .rezerwacja {
+    margin-bottom: 18vh;
+  }
+
   .rezerwacja__form {
     width: 33rem;
     font-size: var(--size-xl);

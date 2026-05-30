@@ -19,7 +19,11 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  height: 45vh;
+  /* Tall enough that the hero (Welcome + Reservation + the bar's bottom gap)
+     fills the viewport, so the panorama's mountains show below the booking bar
+     instead of being cut off by the dark About section. See the matching
+     `.rezerwacja { margin-bottom }` in Reservation.vue. */
+  height: 58vh;
 }
 
 .welcome__name {
@@ -93,7 +97,7 @@
   .welcome {
     padding-top: 5rem;
     padding-bottom: 5rem;
-    height: 50vh;
+    height: 60vh;
   }
 
   .welcome__name {
@@ -111,7 +115,11 @@
 
 @media (min-width: 1024px) {
   .welcome {
-    height: 55vh;
+    /* Taller hero on desktop so the panorama (mountains + foreground) shows
+       below the title instead of being cut off by the dark About section.
+       Pairs with `.rezerwacja { margin-bottom }` in Reservation.vue, which
+       opens the gap under the booking bar where the mountains are revealed. */
+    height: 72vh;
   }
 
   .welcome__name {

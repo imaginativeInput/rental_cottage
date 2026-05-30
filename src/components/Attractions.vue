@@ -263,7 +263,12 @@ const attractions = [
   height: 100%;
 }
 
-.attraction-card__image {
+/* The <img> is rendered by the child PictureImg component, so a plain scoped
+   selector on `.attraction-card__image` never reaches it — the image then keeps
+   the global `max-width: 100%` + natural aspect and spills out of the 16:10
+   media box (most visible on terma-bania, whose source is ~4:3). `:deep()`
+   crosses the component boundary so object-fit: cover applies. */
+.attraction-card__media :deep(.attraction-card__image) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -271,7 +276,7 @@ const attractions = [
   transition: transform 0.5s ease;
 }
 
-.attraction-card:hover .attraction-card__image {
+.attraction-card:hover .attraction-card__media :deep(.attraction-card__image) {
   transform: scale(1.04);
 }
 

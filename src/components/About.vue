@@ -43,6 +43,10 @@ import PictureImg from '@/components/PictureImg.vue';
   /* the gap */
 
   display: grid;
+  /* Cap the (overlapping) grid items at the track width — without this the
+     picture's default `min-width: auto` lets it grow to the image's intrinsic
+     size and bleed ~16px past the viewport, causing horizontal scroll. */
+  grid-template-columns: minmax(0, 1fr);
   clip-path: inset(1px);
   /* to avoid visual glitchs */
 }
@@ -50,6 +54,8 @@ import PictureImg from '@/components/PictureImg.vue';
 .gallery>picture {
   --_p: calc(-1*var(--g));
   grid-area: 1/1;
+  min-width: 0;
+  width: 100%;
   aspect-ratio: 16 / 10;
   cursor: pointer;
   transition: .4s .1s;
