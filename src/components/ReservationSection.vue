@@ -261,12 +261,21 @@ onUnmounted(() => {
           </div>
 
           <div class="reservation__calendar">
-            <span class="field__label">Wybierz datę</span>
-            <div class="calendar-wrap">
+            <div class="calendar-card">
+              <div class="calendar-card__head">
+                <svg class="calendar-card__icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                </svg>
+                <span class="field__label">Wybierz datę</span>
+              </div>
+              <div class="calendar-wrap">
               <VDatePicker v-if="width < 550" :min-date="new Date()" :columns="columns" :attributes="attrs"
                 :expanded="null" :locale="userLocale" v-model.range="dateRange" :masks="masks" />
               <VDatePicker v-else :min-date="new Date()" :columns="columnsWide" :attributes="attrs"
                 :expanded="expanded" :locale="userLocale" v-model.range="dateRange" :masks="masks" />
+              </div>
             </div>
           </div>
 
@@ -338,7 +347,8 @@ onUnmounted(() => {
 
 <style scoped>
 .reservation {
-  background-color: var(--clr-light);
+  /* Warm vertical wash so the section reads cozy rather than clinical-gray. */
+  background: linear-gradient(180deg, #f6efe3 0%, #f3ede4 30%, var(--clr-light) 100%);
   padding: 5rem 0;
 }
 
@@ -375,9 +385,9 @@ onUnmounted(() => {
 
 .reservation__divider {
   display: block;
-  width: 60px;
+  width: 64px;
   height: 2px;
-  background: var(--clr-warm-beige-400);
+  background: linear-gradient(90deg, var(--clr-warm-beige-400), var(--clr-warm-beige-600));
   margin: 1rem auto;
   border-radius: 2px;
 }
@@ -392,10 +402,24 @@ onUnmounted(() => {
 
 /* Card + form grid */
 .reservation__card {
+  position: relative;
   background: #fff;
   border-radius: 1rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  /* Warm-tinted, layered shadow for real depth instead of a flat gray drop. */
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 18px 50px rgba(166, 122, 91, 0.12),
+    0 4px 14px rgba(7, 10, 19, 0.05);
   padding: 1.5rem;
+  overflow: hidden;
+}
+
+/* Thin gold accent strip across the top of the card. */
+.reservation__card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--clr-warm-beige-400), var(--clr-warm-beige-600), var(--clr-warm-beige-800));
 }
 
 .reservation__form {
@@ -819,10 +843,39 @@ onUnmounted(() => {
 }
 
 /* Calendar wrapper + v-calendar deep overrides */
+
+/* The calendar's own elevated white card — the core fix. It must NOT share the
+   section background, so it reads as a distinct, inviting element. */
+.calendar-card {
+  background: #fff;
+  border: 1px solid var(--clr-slate200);
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 30px rgba(166, 122, 91, 0.10),
+    0 2px 6px rgba(7, 10, 19, 0.04);
+  overflow: hidden;
+}
+
+.calendar-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--clr-slate200);
+  background: linear-gradient(180deg, rgba(250, 240, 219, 0.55), rgba(250, 240, 219, 0));
+}
+
+.calendar-card__icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--clr-warm-beige-600);
+  flex-shrink: 0;
+}
+
 .calendar-wrap {
-  background: var(--clr-light);
-  border-radius: 0.75rem;
-  padding: 0.75rem;
+  /* Subtle warm grounding tint behind the month grid. */
+  background: linear-gradient(180deg, rgba(250, 240, 219, 0.20), rgba(255, 255, 255, 0));
+  border-radius: 0 0 0.85rem 0.85rem;
+  padding: 0.85rem 0.75rem 1rem;
   display: flex;
   justify-content: center;
 }
@@ -833,7 +886,9 @@ onUnmounted(() => {
   width: 100%;
   font-family: inherit;
   --vc-highlight-solid-bg: var(--clr-warm-beige-600);
+  --vc-highlight-solid-content-color: #fff;
   --vc-highlight-light-bg: var(--clr-warm-beige-200);
+  --vc-highlight-light-content-color: var(--clr-warm-beige-800);
   --vc-highlight-outline-border: var(--clr-warm-beige-600);
   --vc-highlight-outline-content-color: var(--clr-warm-beige-800);
 }
@@ -856,13 +911,16 @@ onUnmounted(() => {
 }
 
 :deep(.vc-title) {
+  /* Serif month titles echo the section heading for character. */
+  font-family: 'Playfair Display', serif;
   color: var(--clr-slate800);
   font-weight: 600;
-  font-size: var(--size-base);
+  font-size: var(--size-lg);
+  letter-spacing: -0.01em;
 }
 
 :deep(.vc-weekday) {
-  color: var(--clr-slate400);
+  color: var(--clr-slate600);
   font-weight: 600;
   padding-top: 0.75rem;
   text-transform: uppercase;
@@ -870,19 +928,44 @@ onUnmounted(() => {
   font-size: var(--size-xs);
 }
 
-:deep(.vc-day-content:hover) {
-  background-color: var(--clr-warm-beige-200);
-  color: var(--clr-slate800);
+:deep(.vc-day-content) {
+  font-weight: 500;
 }
 
+:deep(.vc-day-content:hover) {
+  background-color: var(--clr-warm-beige-200);
+  color: var(--clr-warm-beige-800);
+}
+
+/* Distinct selected range: solid gold ends with white text, soft beige fill in
+   between. Colours come from the library's own CSS vars (set on .vc-container
+   above); here we just emphasise the selected day numbers. */
+:deep(.vc-highlight-content-solid) {
+  color: #fff;
+  font-weight: 700;
+}
+
+:deep(.vc-highlight-content-light) {
+  font-weight: 600;
+}
+
+/* Nav arrows as real circular buttons, not dead gray blobs. */
 :deep(.vc-arrow) {
-  color: var(--clr-slate600);
-  background-color: transparent;
-  border-radius: 0.5rem;
+  color: var(--clr-warm-beige-800);
+  background-color: var(--clr-warm-beige-200);
+  border-radius: 999px;
+  width: 2rem;
+  height: 2rem;
+  transition: background-color 0.2s, color 0.2s, transform 0.15s;
 }
 
 :deep(.vc-arrow:hover) {
-  background-color: var(--clr-warm-beige-200);
+  background-color: var(--clr-warm-beige-600);
+  color: #fff;
+}
+
+:deep(.vc-arrow:active) {
+  transform: scale(0.92);
 }
 
 /* Responsive */
