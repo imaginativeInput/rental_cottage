@@ -35,14 +35,14 @@ describe('Footer', () => {
     wrapper = mount(Footer)
     const emailLink = wrapper.find('a.email-link')
     expect(emailLink.exists()).toBe(true)
-    expect(emailLink.attributes('href')).toBe('mailto:rzepiskadomek@gmail.com')
+    expect(emailLink.attributes('href')).toBe('mailto:rezerwacja@domekrzepiska.pl')
   })
 
   it('renders email address text inside .email-text span', () => {
     wrapper = mount(Footer)
     const emailText = wrapper.find('.email-text')
     expect(emailText.exists()).toBe(true)
-    expect(emailText.text()).toBe('rzepiskadomek@gmail.com')
+    expect(emailText.text()).toBe('rezerwacja@domekrzepiska.pl')
   })
 
   it('renders .social-links container', () => {
